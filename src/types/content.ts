@@ -27,7 +27,7 @@ export interface ToggleContentPayload {
   sha1_hash?: string;  // Made optional - SHA1 hash of the content to toggle
   file_path?: string; // Optional: Direct path to the file to toggle
   enabled: boolean;   // The desired new enabled state
-  norisk_mod_identifier?: NoriskModIdentifier; // Optional identifier for NoRisk Pack items
+  norisk_mod_identifier?: NoriskModIdentifier; // Optional identifier for Copper Pack items
   content_type?: ContentType; // Optional: For targeted asset toggling
   // Future: content_identifier (e.g., could be sha1, mod_id, filename)
   // Future: content_type?: 'mod' | 'resourcepack' | 'shaderpack' | 'datapack';
@@ -42,7 +42,7 @@ export enum ContentType {
   ResourcePack = "ResourcePack",
   ShaderPack = "ShaderPack",
   DataPack = "DataPack",
-  NoRiskMod = "NoRiskMod",
+  CopperMod = "CopperMod",
 }
 
 /**

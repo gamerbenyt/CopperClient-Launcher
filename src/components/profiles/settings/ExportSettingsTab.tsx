@@ -328,7 +328,7 @@ export function ExportSettingsTab({
                 "resourcepacks",
                 "shaderpacks",
                 "options.txt",
-                "NoRiskClientLauncher",
+                "CopperClientLauncher",
                 "config",
                 "custom_mods",
                 "mods",

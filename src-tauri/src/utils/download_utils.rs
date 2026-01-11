@@ -79,7 +79,7 @@ impl Default for DownloadConfig {
             force_overwrite: false,
             max_retries: 3,
             user_agent: Some(format!(
-                "NoRiskClient-Launcher/{} (support@norisk.gg)",
+                "CopperClient-Launcher/{} (support@norisk.gg)",
                 env!("CARGO_PKG_VERSION")
             )),
             progress_callback: None,
@@ -576,7 +576,7 @@ impl DownloadUtils {
         Ok(())
     }
 
-    /// fix for https://github.com/NoRiskClient/issues/issues/1487
+    /// fix for https://github.com/CopperClient/issues/issues/1487
     /// Comprehensive ZIP file integrity check - detects incomplete/corrupt JAR files
     /// Checks both ZIP header and End of Central Directory record
     pub async fn is_zip_file_complete(file_path: &Path) -> bool {

@@ -209,7 +209,7 @@ export function ProfileDetailView({
     },
     {
       id: "noriskv2" as ContentSubType,
-      label: "NoRisk Mods",
+      label: "Copper Mods",
       icon: "solar:shield-check-bold",
     },
   ];
@@ -478,11 +478,11 @@ export function ProfileDetailView({
                   {activeContentType === "noriskv2" && (
                   <LocalContentTabV2<LocalContentItem>
                     profile={currentProfile}
-                    contentType="NoRiskMod"
+                    contentType="CopperMod"
                     getDisplayFileName={getGenericDisplayFileName}
-                    itemTypeName="NoRisk Mod"
-                    itemTypeNamePlural="NoRisk Mods"
-                    addContentButtonText="Add NoRisk Mods"
+                    itemTypeName="Copper Mod"
+                    itemTypeNamePlural="Copper Mods"
+                    addContentButtonText="Add Copper Mods"
                     emptyStateIconOverride="solar:shield-check-bold-duotone"
                     onRefreshRequired={handleRefresh}
                     onBrowseContentRequest={handleBrowseContent}

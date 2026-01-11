@@ -380,7 +380,7 @@ export function InstallationSettingsTab({
   const getReasonText = (reason: string): string => {
     switch (reason) {
       case "norisk_pack":
-        return "Forced by NoRisk Pack";
+        return "Forced by Copper Pack";
       case "user_overwrite":
         return "User Overwrite";
       case "profile_default":

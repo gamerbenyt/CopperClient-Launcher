@@ -99,7 +99,7 @@ function CapeItemDisplay({
   const [isHovered, setIsHovered] = useState(false);
   const accentColor = useThemeStore((state) => state.accentColor);
 
-  // Only use favorites for NoRisk capes
+  // Only use favorites for Copper capes
   const isFavorite = !isVanilla ? useCapeFavoritesStore((s) => s.isFavorite((cape as CosmeticCape)._id)) : false;
   const toggleFavoriteOptimistic = useCapeFavoritesStore((s) => s.toggleFavoriteOptimistic);
 
@@ -164,7 +164,7 @@ function CapeItemDisplay({
     >
       {/* Action buttons - top right */}
       <div className={`absolute top-3 right-3 z-20 flex flex-col gap-1`}>
-        {/* Favorite button (only for NoRisk capes) */}
+        {/* Favorite button (only for Copper capes) */}
         {!isVanilla && (
           <button
             onClick={(e) => {
@@ -279,7 +279,7 @@ function CapeItemDisplay({
             }
           </h3>
 
-          {/* Usage Stats (only for NoRisk capes) */}
+          {/* Usage Stats (only for Copper capes) */}
           {!isVanilla && (
             <div className="flex items-center justify-center gap-2 text-xs font-minecraft-ten">
               <div className="text-white/60 flex items-center gap-1">

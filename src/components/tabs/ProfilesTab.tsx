@@ -191,12 +191,12 @@ export function ProfilesTab() {
   initiallyFilteredProfiles.sort((a, b) => a.name.localeCompare(b.name));
 
   const groupedProfiles = (() => {
-    // Separate NoRisk Client profiles and all other profiles
+    // Separate Copper Client profiles and all other profiles
     const noriskClientProfiles = initiallyFilteredProfiles.filter(profile => 
-      profile.group === "NORISK CLIENT"
+      profile.group === "COPPER CLIENT"
     );
     const otherProfiles = initiallyFilteredProfiles.filter(profile => 
-      profile.group !== "NORISK CLIENT"
+      profile.group !== "COPPER CLIENT"
     );
     
     // Sort both groups
@@ -205,9 +205,9 @@ export function ProfilesTab() {
     
     const result: Record<string, Profile[]> = {};
     
-    // Always add NoRisk Client group first if there are profiles with that group
+    // Always add Copper Client group first if there are profiles with that group
     if (noriskClientProfiles.length > 0) {
-      result["NoRisk Client"] = noriskClientProfiles;
+      result["Copper Client"] = noriskClientProfiles;
     }
     
     // Group other profiles based on criterion
@@ -245,9 +245,9 @@ export function ProfilesTab() {
   };
 
   const sortedGroupKeys = Object.keys(groupedProfiles).sort((a, b) => {
-    // NoRisk Client should always be first
-    if (a === "NoRisk Client") return -1;
-    if (b === "NoRisk Client") return 1;
+    // Copper Client should always be first
+    if (a === "Copper Client") return -1;
+    if (b === "Copper Client") return 1;
     
     const specialKeys = [
       "All Profiles",

@@ -2067,7 +2067,7 @@ impl ProfileManager {
         }
     }
 
-    /// Helper function to check if a group belongs to NoRisk Client
+    /// Helper function to check if a group belongs to Copper Client
     fn is_norisk_client_group(group_name: &str) -> bool {
         let normalized = group_name.to_lowercase();
         normalized == "nrc" || normalized == "noriskclient" || normalized == "norisk client"
@@ -2103,7 +2103,7 @@ impl ProfileManager {
     pub fn calculate_group_directory(&self, profile: &Profile) -> Result<PathBuf> {
         if let Some(group) = &profile.group {
             if Self::is_norisk_client_group(group) {
-                // NoRisk Client groups go to "noriskclient/legacy" for MC < 1.13, "noriskclient/new" otherwise
+                // Copper Client groups go to "noriskclient/legacy" for MC < 1.13, "noriskclient/new" otherwise
                 if mc_utils::is_legacy_minecraft_version(&profile.game_version) {
                     Ok(default_profile_path().join("noriskclient").join("legacy"))
                 } else {
@@ -2812,9 +2812,9 @@ impl ProfileManager {
                 changed = true;
             }
             
-            // Force update NoRisk pack selection if different
+            // Force update Copper pack selection if different
             if copy.selected_norisk_pack_id != standard_profile.selected_norisk_pack_id {
-                info!("Updating NoRisk pack for copy {}: {:?} -> {:?}", copy_id, copy.selected_norisk_pack_id, standard_profile.selected_norisk_pack_id);
+                info!("Updating Copper pack for copy {}: {:?} -> {:?}", copy_id, copy.selected_norisk_pack_id, standard_profile.selected_norisk_pack_id);
                 copy.selected_norisk_pack_id = standard_profile.selected_norisk_pack_id.clone();
                 changed = true;
             }

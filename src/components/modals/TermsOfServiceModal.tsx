@@ -66,7 +66,7 @@ export function TermsOfServiceModal({ isOpen }: TermsOfServiceModalProps) {
       <div className="p-6 space-y-6 text-white">
         <div className="text-center space-y-4">
           <h3 className="text-3xl font-minecraft text-blue-400 lowercase">
-            Welcome to NoRisk Launcher!
+            Welcome to Copper Launcher!
           </h3>
           <p className="text-lg font-minecraft-ten text-gray-300">
             Before you start using our launcher, please read and accept our Terms of Service.
@@ -115,7 +115,7 @@ export function TermsOfServiceModal({ isOpen }: TermsOfServiceModalProps) {
 
         <div className="text-center text-sm text-gray-400">
           <p>
-            You can withdraw your consent at any time. However, you must accept the terms to use NoRisk Client.
+            You can withdraw your consent at any time. However, you must accept the terms to use Copper Client.
           </p>
         </div>
       </div>

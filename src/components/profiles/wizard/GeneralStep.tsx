@@ -73,7 +73,7 @@ export function GeneralStep({
         }));
         setNoriskPacks(packsData.packs);
       } catch (err) {
-        console.error("Failed to load NoRisk packs:", err);
+        console.error("Failed to load Copper packs:", err);
       } finally {
         setLoading(false);
       }
@@ -202,7 +202,7 @@ export function GeneralStep({
                 className="w-5 h-5 animate-spin"
               />
               <span className="font-minecraft text-xl">
-                Loading NoRisk packs...
+                Loading Copper packs...
               </span>
             </div>
           ) : (

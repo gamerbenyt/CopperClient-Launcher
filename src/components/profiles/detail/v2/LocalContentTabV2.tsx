@@ -156,7 +156,7 @@ const LOCAL_CONTENT_TAB_ICONS_TO_PRELOAD = [
   "solar:refresh-outline", // For primary refresh button normal state
   "solar:download-minimalistic-bold", // For Update All button
   "solar:alt-arrow-down-bold", // For version dropdown button
-  "solar:shield-cross-bold-duotone", // For NoRisk blocked badge
+  "solar:shield-cross-bold-duotone", // For Copper blocked badge
 ];
 
 interface LocalContentTabV2Props<T extends LocalContentItem> {
@@ -216,7 +216,7 @@ export function LocalContentTabV2<T extends LocalContentItem>({
   const [isLoadingVersions, setIsLoadingVersions] = useState(false);
   const [versionsError, setVersionsError] = useState<string | null>(null);
 
-  // Fetch Flagsmith config when a NoRisk pack is selected
+  // Fetch Flagsmith config when a Copper pack is selected
   useEffect(() => {
     // Only fetch if a pack is selected, as blocking rules only apply in that context.
     if (profile?.selected_norisk_pack_id) {
@@ -225,7 +225,7 @@ export function LocalContentTabV2<T extends LocalContentItem>({
           setIsBlockedConfigLoaded(true);
         })
         .catch((err) => {
-          console.error("Failed to load NoRisk blocked mods config:", err);
+          console.error("Failed to load Copper blocked mods config:", err);
           // Optionally show a toast, but might be too noisy.
           // toast.error("Could not load mod compatibility rules.");
         });
@@ -339,17 +339,17 @@ export function LocalContentTabV2<T extends LocalContentItem>({
     }
   };
 
-  // Fetch NoRiskPacksConfig if content type is NoRiskMod
+  // Fetch CopperPacksConfig if content type is CopperMod
   useEffect(() => {
-    if (contentType === "NoRiskMod" && profile) {
+    if (contentType === "CopperMod" && profile) {
       const fetchPacks = async () => {
         setIsFetchingPacksConfig(true);
         try {
           const config = await ProfileService.getNoriskPacksResolved();
           setNoriskPacksConfig(config);
         } catch (err) {
-          console.error("Failed to fetch NoRisk packs config:", err);
-          toast.error("Failed to load NoRisk pack list.");
+          console.error("Failed to fetch Copper packs config:", err);
+          toast.error("Failed to load Copper pack list.");
           setNoriskPacksConfig(null);
         } finally {
           setIsFetchingPacksConfig(false);
@@ -357,28 +357,28 @@ export function LocalContentTabV2<T extends LocalContentItem>({
       };
       fetchPacks();
     } else {
-      setNoriskPacksConfig(null); // Clear if not NoRiskMod or no profile
+      setNoriskPacksConfig(null); // Clear if not CopperMod or no profile
     }
   }, [contentType, profile]);
 
   const handleRefreshPacksList = useCallback(async () => {
-    if (contentType !== "NoRiskMod") return;
+    if (contentType !== "CopperMod") return;
     setIsRefreshingPacksList(true);
     try {
       await ProfileService.refreshNoriskPacks();
       const config = await ProfileService.getNoriskPacksResolved();
       setNoriskPacksConfig(config);
-      toast.success("NoRisk Pack list refreshed.");
+      toast.success("Copper Pack list refreshed.");
     } catch (err) {
-      console.error("Failed to refresh NoRisk packs list:", err);
-      toast.error("Failed to refresh NoRisk pack list.");
+      console.error("Failed to refresh Copper packs list:", err);
+      toast.error("Failed to refresh Copper pack list.");
     } finally {
       setIsRefreshingPacksList(false);
     }
   }, [contentType]);
 
   const noriskPackOptions = useMemo((): SelectOption[] => {
-    if (contentType !== "NoRiskMod" || !noriskPacksConfig) {
+    if (contentType !== "CopperMod" || !noriskPacksConfig) {
       return [{ value: "", label: "- No Pack Selected -" }];
     }
     const options = Object.entries(noriskPacksConfig.packs).map(
@@ -411,9 +411,9 @@ export function LocalContentTabV2<T extends LocalContentItem>({
           onRefreshRequired();
         }
       } catch (err) {
-        console.error("Failed to update selected NoRisk pack:", err);
+        console.error("Failed to update selected Copper pack:", err);
         toast.error(
-          `Failed to switch NoRisk pack: ${err instanceof Error ? err.message : String(err)}`,
+          `Failed to switch Copper pack: ${err instanceof Error ? err.message : String(err)}`,
         );
       }
     },
@@ -702,18 +702,18 @@ export function LocalContentTabV2<T extends LocalContentItem>({
       const isItemOpen = openVersionDropdownId === item.filename;
 
       const noRiskStatus = isBlockedConfigLoaded
-        ? FlagsmithService.getModNoRiskStatus(
+        ? FlagsmithService.getModCopperStatus(
             item.filename,
             item.modrinth_info?.project_id || item.curseforge_info?.project_id,
             item.modrinth_info?.version_id || item.curseforge_info?.file_id,
           )
         : null;
-      const isBlockedByNoRisk = noRiskStatus === 'blocked';
-      const isWarningByNoRisk = noRiskStatus === 'warning';
+      const isBlockedByCopper = noRiskStatus === 'blocked';
+      const isWarningByCopper = noRiskStatus === 'warning';
       
       // Debug logging
       if (noRiskStatus) {
-        console.log('[LocalContentTabV2] Item:', item.filename, 'noRiskStatus:', noRiskStatus, 'isBlocked:', isBlockedByNoRisk, 'isWarning:', isWarningByNoRisk);
+        console.log('[LocalContentTabV2] Item:', item.filename, 'noRiskStatus:', noRiskStatus, 'isBlocked:', isBlockedByCopper, 'isWarning:', isWarningByCopper);
       }
 
       // Get the appropriate icon using the platform-aware helper function
@@ -748,9 +748,9 @@ export function LocalContentTabV2<T extends LocalContentItem>({
       const itemIconNode = (
         <div className="absolute inset-0 w-full h-full flex items-center justify-center">
           {iconToShow}
-          {isBlockedByNoRisk && (
+          {isBlockedByCopper && (
             <div className="absolute top-0.5 left-0.5 z-10 pointer-events-auto">
-              <Tooltip content="This mod is blocked by NoRisk Client as it is known to cause crashes or severe compatibility issues. Installation is not recommended.">
+              <Tooltip content="This mod is blocked by Copper Client as it is known to cause crashes or severe compatibility issues. Installation is not recommended.">
                 <div>
                   <Icon 
                     icon="solar:danger-triangle-bold" 
@@ -760,9 +760,9 @@ export function LocalContentTabV2<T extends LocalContentItem>({
               </Tooltip>
             </div>
           )}
-          {!isBlockedByNoRisk && isWarningByNoRisk && (
+          {!isBlockedByCopper && isWarningByCopper && (
             <div className="absolute top-0.5 left-0.5 z-10 pointer-events-auto">
-              <Tooltip content="This version is known to cause crashes or compatibility issues with NoRisk Client. Installation is possible but not recommended.">
+              <Tooltip content="This version is known to cause crashes or compatibility issues with Copper Client. Installation is possible but not recommended.">
                 <div>
                   <Icon 
                     icon="solar:danger-triangle-bold" 
@@ -809,7 +809,7 @@ export function LocalContentTabV2<T extends LocalContentItem>({
             {versionText ? (
               <>
                 <span>Version: {versionText}</span>
-                {contentType !== "NoRiskMod" && (
+                {contentType !== "CopperMod" && (
                   <div className="relative">
                     <button
                       ref={(el) => {
@@ -929,9 +929,9 @@ export function LocalContentTabV2<T extends LocalContentItem>({
       const isDisabled = item.is_disabled;
 
       const itemBadgesNode = [
-        // NoRisk crash warning (highest priority)
-        ...(isBlockedByNoRisk ? [{
-          text: "CRASHES WITH NRC",
+        // Copper crash warning (highest priority)
+        ...(isBlockedByCopper ? [{
+          text: "CRASHES WITH CC",
           color: "#ef4444"
         }] : []),
 
@@ -958,7 +958,7 @@ export function LocalContentTabV2<T extends LocalContentItem>({
       const itemActions: ContentActionButton[] = [];
 
       // Check if update is available (used for custom tooltip rendering)
-      // Note: NoRisk mods can also have updates available, but they won't be auto-updatable
+      // Note: Copper mods can also have updates available, but they won't be auto-updatable
       const hasUpdateAvailable = updateAvailableVersion && !isCurrentlyUpdating;
       let shouldShowUpdateButton = false;
       let isUpdateButtonDimmed = false;
@@ -1033,7 +1033,7 @@ export function LocalContentTabV2<T extends LocalContentItem>({
         onClick: () => handleToggleItemEnabled(item),
       });
 
-      // Delete action (if not NoRisk mod) - icon-only
+      // Delete action (if not Copper mod) - icon-only
       if (!item.norisk_info) {
         itemActions.push({
           id: "delete",
@@ -1233,7 +1233,7 @@ export function LocalContentTabV2<T extends LocalContentItem>({
 
   const isBusyWithEssentialLoad =
     isLoading ||
-    (contentType === "NoRiskMod" &&
+    (contentType === "CopperMod" &&
       (isFetchingPacksConfig || isRefreshingPacksList));
   const isAnyBatchActionInProgress =
     isBatchToggling || isBatchDeleting || isUpdatingAll;
@@ -1303,7 +1303,7 @@ export function LocalContentTabV2<T extends LocalContentItem>({
             }
           />
 
-          {/* Right side: Action Buttons and NoRiskPack Dropdown */}
+          {/* Right side: Action Buttons and CopperPack Dropdown */}
           <div className="flex items-center gap-2">
             {/* Batch Actions - Always visible when items are selected */}
             {selectedItemIds.size > 0 && (
@@ -1334,7 +1334,7 @@ export function LocalContentTabV2<T extends LocalContentItem>({
                       : `Disable update checks for ${updatesToggleConfig.actionCount} selected items`,
                     onClick: () => handleBatchToggleSelectedUpdatesEnabled(updatesToggleConfig.shouldEnable),
                   }] : []),
-                  ...(contentType !== "NoRiskMod" ? [{
+                  ...(contentType !== "CopperMod" ? [{
                     id: "batch-delete",
                     label: isBatchDeleting ? "DELETING..." : `DELETE (${selectedItemIds.size})`,
                     icon: isBatchDeleting ? LOCAL_CONTENT_TAB_ICONS_TO_PRELOAD[11] : LOCAL_CONTENT_TAB_ICONS_TO_PRELOAD[6],
@@ -1352,8 +1352,8 @@ export function LocalContentTabV2<T extends LocalContentItem>({
             {/* Hide other buttons when any items are selected */}
             {selectedItemIds.size === 0 && (
               <>
-                {/* NoRisk Pack Selector - Only for NoRiskMod type */}
-                {contentType === "NoRiskMod" &&
+                {/* Copper Pack Selector - Only for CopperMod type */}
+                {contentType === "CopperMod" &&
                   noriskPacksConfig &&
                   noriskPackOptions.length > 0 && (
                     <div className="flex items-center gap-2">
@@ -1377,8 +1377,8 @@ export function LocalContentTabV2<T extends LocalContentItem>({
                     </div>
                   )}
 
-                {/* Update All buttons - Only for non-NoRiskMod types */}
-                {contentType !== "NoRiskMod" && updatableContentCount > 0 && (
+                {/* Update All buttons - Only for non-CopperMod types */}
+                {contentType !== "CopperMod" && updatableContentCount > 0 && (
                   <ContentActionButtons
                     actions={[
                       {
@@ -1396,8 +1396,8 @@ export function LocalContentTabV2<T extends LocalContentItem>({
                   />
                 )}
 
-                {/* Browse and Add buttons - only for non-NoRiskMod types */}
-                {effectiveOnAddContent && contentType !== "NoRiskMod" && profile && (
+                {/* Browse and Add buttons - only for non-CopperMod types */}
+                {effectiveOnAddContent && contentType !== "CopperMod" && profile && (
                   <ContentActionButtons
                     actions={[
                       {
@@ -1553,14 +1553,14 @@ export function LocalContentTabV2<T extends LocalContentItem>({
   }
 
   const hasSelectedItems = selectedItemIds.size > 0;
-  const showNoRiskPackSelector = contentType === "NoRiskMod";
-  const isNoRiskPackSelected =
-    showNoRiskPackSelector && profile?.selected_norisk_pack_id;
+  const showCopperPackSelector = contentType === "CopperMod";
+  const isCopperPackSelected =
+    showCopperPackSelector && profile?.selected_norisk_pack_id;
 
   // Dynamic empty state messages
   const getEmptyStateMessage = () => {
-    if (contentType === "NoRiskMod" && !profile?.selected_norisk_pack_id) {
-      return "No NoRisk Pack Selected";
+    if (contentType === "CopperMod" && !profile?.selected_norisk_pack_id) {
+      return "No Copper Pack Selected";
     } else if (error) {
       return ""; // Remove title, show only button
     } else if ((isLoading || isFetchingPacksConfig) && items.length === 0) {
@@ -1583,8 +1583,8 @@ export function LocalContentTabV2<T extends LocalContentItem>({
   };
 
   const getEmptyStateDescription = () => {
-    if (contentType === "NoRiskMod" && !profile?.selected_norisk_pack_id) {
-      return "Please select a NoRisk Modpack from the dropdown to manage its mods.";
+    if (contentType === "CopperMod" && !profile?.selected_norisk_pack_id) {
+      return "Please select a Copper Modpack from the dropdown to manage its mods.";
     } else if (error) {
       return "Please try refreshing or check the console.";
     } else if ((isLoading || isFetchingPacksConfig) && items.length === 0) {
@@ -1633,7 +1633,7 @@ export function LocalContentTabV2<T extends LocalContentItem>({
     <>
       <GenericContentTab<T>
         items={
-          contentType === "NoRiskMod" && !profile?.selected_norisk_pack_id
+          contentType === "CopperMod" && !profile?.selected_norisk_pack_id
             ? []
             : filteredItems
         }
@@ -1649,11 +1649,11 @@ export function LocalContentTabV2<T extends LocalContentItem>({
         emptyStateMessage={getEmptyStateMessage()}
         emptyStateDescription={getEmptyStateDescription()}
         emptyStateAction={
-          // Show browse button for empty states (except when NoRisk pack not selected and when loading)
+          // Show browse button for empty states (except when Copper pack not selected and when loading)
           (isTrulyEmptyState ||
            (searchQuery && filteredItems.length === 0 && selectedItemIds.size === 0) ||
            (error && !isLoading)) &&
-          !(contentType === "NoRiskMod" && !profile?.selected_norisk_pack_id) ? (
+          !(contentType === "CopperMod" && !profile?.selected_norisk_pack_id) ? (
             <ContentActionButtons
               actions={[
                 {

@@ -382,8 +382,8 @@ pub async fn install_minecraft_version(
         .await?;
     info!("Asset download completed!");
 
-    // Download NoRiskClient assets if profile has a selected pack
-    info!("\nDownloading NoRiskClient assets...");
+    // Download CopperClient assets if profile has a selected pack
+    info!("\nDownloading CopperClient assets...");
 
     let norisk_assets_service = NoriskClientAssetsDownloadService::new()
         .with_concurrent_downloads(launcher_config.concurrent_downloads);
@@ -393,7 +393,7 @@ pub async fn install_minecraft_version(
         .download_nrc_assets_for_profile(&profile, credentials.as_ref(), is_experimental_mode)
         .await?;
 
-    info!("NoRiskClient Asset download completed!");
+    info!("CopperClient Asset download completed!");
 
     // Emit client download event
     let client_event_id = emit_progress_event(

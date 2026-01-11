@@ -10,7 +10,7 @@ import type {
   UnifiedVersion
 } from '../../../types/unified';
 import { ModPlatform, UnifiedSortType, UnifiedProjectType } from '../../../types/unified';
-import { getBlockedModsConfig, getModNoRiskStatus } from '../../../services/flagsmith-service';
+import { getBlockedModsConfig, getModCopperStatus } from '../../../services/flagsmith-service';
 import type {
   ModrinthProjectType,
   ModrinthSearchResponse,
@@ -601,11 +601,11 @@ export function ModrinthSearchV2({
         project_id: projectId
       });
       
-      // Add NoRisk status to each version
-      const versionsWithNoRiskStatus = response.versions.map(version => {
+      // Add Copper status to each version
+      const versionsWithCopperStatus = response.versions.map(version => {
         const primaryFile = version.files.find(file => file.primary) || version.files[0];
         const filename = primaryFile?.filename || '';
-        const noRiskStatus = getModNoRiskStatus(filename, projectId, version.id);
+        const noRiskStatus = getModCopperStatus(filename, projectId, version.id);
         
         return {
           ...version,
@@ -613,7 +613,7 @@ export function ModrinthSearchV2({
         };
       });
       
-      const sortedVersions = versionsWithNoRiskStatus.sort((a, b) => new Date(b.date_published).getTime() - new Date(a.date_published).getTime());
+      const sortedVersions = versionsWithCopperStatus.sort((a, b) => new Date(b.date_published).getTime() - new Date(a.date_published).getTime());
 
       setExpandedVersions(prev => ({ ...prev, [projectId]: sortedVersions }));
       // Initialize the number of displayed versions for this project
@@ -669,7 +669,7 @@ export function ModrinthSearchV2({
       // Create batch requests for all versions to check
       const requests: ContentCheckRequest[] = [];
       
-      // First request for just the project to check NoRisk pack status
+      // First request for just the project to check Copper pack status
       requests.push({
         project_id: projectId,
         project_type: projectType,
@@ -713,19 +713,19 @@ export function ModrinthSearchV2({
       // Process the results
       const newInstalledState: Record<string, ContentInstallStatus | null> = 
         installedVersions[selectedProfile.id] || {};
-      let projectInNoRiskStatus: ContentInstallStatus | null = null;
+      let projectInCopperStatus: ContentInstallStatus | null = null;
       
       batchResults.results.forEach(result => {
         if (result.request_id === `project-${projectId}`) {
-          // This is the project-level check for NoRisk pack
-          projectInNoRiskStatus = result.status;
+          // This is the project-level check for Copper pack
+          projectInCopperStatus = result.status;
         } else if (result.request_id) {
           // This is a version check
           newInstalledState[result.request_id] = {
             ...result.status,
-            // If project is in NoRisk pack, set is_included_in_norisk_pack based on version match
+            // If project is in Copper pack, set is_included_in_norisk_pack based on version match
             is_included_in_norisk_pack: 
-              projectInNoRiskStatus?.is_included_in_norisk_pack && result.status.is_specific_version_in_pack
+              projectInCopperStatus?.is_included_in_norisk_pack && result.status.is_specific_version_in_pack
           };
         }
       });
@@ -758,7 +758,7 @@ export function ModrinthSearchV2({
       
       // Fallback to original method if batch fails
       try {
-        const projectInNoRiskStatus = await ProfileService.isContentInstalled({
+        const projectInCopperStatus = await ProfileService.isContentInstalled({
           profile_id: selectedProfile.id,
           project_id: projectId,
           project_type: projectType
@@ -801,7 +801,7 @@ export function ModrinthSearchV2({
             
             newInstalledState[version.id] = {
               is_installed: statusFromService.is_installed,
-              is_included_in_norisk_pack: projectInNoRiskStatus.is_included_in_norisk_pack && statusFromService.is_specific_version_in_pack,
+              is_included_in_norisk_pack: projectInCopperStatus.is_included_in_norisk_pack && statusFromService.is_specific_version_in_pack,
               is_specific_version_in_pack: statusFromService.is_specific_version_in_pack,
               is_enabled: statusFromService.is_enabled !== undefined ? statusFromService.is_enabled : null,
               found_item_details: statusFromService.found_item_details || null,
@@ -2934,7 +2934,7 @@ export function ModrinthSearchV2({
         console.warn("[ModrinthSearchV2] Unhandled project_type for NrContentType mapping in toggle:", project.project_type);
     }
 
-    // Check if this is a NoRisk Pack item
+    // Check if this is a Copper Pack item
     if (currentVersionStatus?.norisk_pack_item_details?.norisk_mod_identifier) {
       const noriskIdentifier = currentVersionStatus.norisk_pack_item_details.norisk_mod_identifier;
       
@@ -3002,18 +3002,18 @@ export function ModrinthSearchV2({
           return { versionName: version.version_number };
         },
         {
-          loading: `${toastMessage} NoRisk Pack item: ${project.title} (${version.version_number})...`,
-          success: ({ versionName }) => `Successfully ${successMessage} NoRisk Pack item: ${project.title} (${versionName})`,
-          error: (err) => `Failed to ${toastMessage.toLowerCase()} NoRisk Pack item: ${err.message || String(err)}`
+          loading: `${toastMessage} Copper Pack item: ${project.title} (${version.version_number})...`,
+          success: ({ versionName }) => `Successfully ${successMessage} Copper Pack item: ${project.title} (${versionName})`,
+          error: (err) => `Failed to ${toastMessage.toLowerCase()} Copper Pack item: ${err.message || String(err)}`
         }
       ).catch(err => {
-        console.error(`Error ${toastMessage.toLowerCase()} NoRisk Pack item:`, err);
+        console.error(`Error ${toastMessage.toLowerCase()} Copper Pack item:`, err);
       });
       
-      return; // Exit after handling NoRisk pack item
+      return; // Exit after handling Copper pack item
     }
 
-    // Regular content toggle using SHA1 hash (for non-NoRisk pack items)
+    // Regular content toggle using SHA1 hash (for non-Copper pack items)
     if (!sha1Hash) {
       toast.error("Cannot enable/disable version: missing file hash");
       return;
@@ -3029,7 +3029,7 @@ export function ModrinthSearchV2({
           sha1_hash: sha1Hash,
           enabled: newEnabledState,
           content_type: nrContentType, // Add mapped content_type
-          norisk_mod_identifier: undefined, // Explicitly undefined for non-NoRisk items
+          norisk_mod_identifier: undefined, // Explicitly undefined for non-Copper items
         };
         
         await toggleContentFromProfile(payload);
@@ -3099,24 +3099,24 @@ export function ModrinthSearchV2({
     norisk_pack_item_details: existingPreviousStatus?.norisk_pack_item_details || null,
   });
 
-  // Helper function to get NoRisk status for a project
-  const getProjectNoRiskStatus = (project: UnifiedModSearchResult): 'blocked' | 'warning' | null => {
-    console.log('[getProjectNoRiskStatus] Checking project:', project.title, 'ID:', project.project_id);
-    console.log('[getProjectNoRiskStatus] Config loaded:', blockedModsConfigLoaded);
+  // Helper function to get Copper status for a project
+  const getProjectCopperStatus = (project: UnifiedModSearchResult): 'blocked' | 'warning' | null => {
+    console.log('[getProjectCopperStatus] Checking project:', project.title, 'ID:', project.project_id);
+    console.log('[getProjectCopperStatus] Config loaded:', blockedModsConfigLoaded);
     
     if (!blockedModsConfigLoaded) {
-      console.log('[getProjectNoRiskStatus] Config not loaded yet, returning null');
+      console.log('[getProjectCopperStatus] Config not loaded yet, returning null');
       return null;
     }
     
-    const result = getModNoRiskStatus('', project.project_id, null);
-    console.log('[getProjectNoRiskStatus] Result for', project.project_id, ':', result);
+    const result = getModCopperStatus('', project.project_id, null);
+    console.log('[getProjectCopperStatus] Result for', project.project_id, ':', result);
     return result;
   };
 
   // Helper function to check if a project is blocked (for backward compatibility)
   const isProjectBlocked = (project: UnifiedModSearchResult): boolean => {
-    return getProjectNoRiskStatus(project) === 'blocked';
+    return getProjectCopperStatus(project) === 'blocked';
   };
 
   return (
@@ -3184,7 +3184,7 @@ export function ModrinthSearchV2({
                   const currentVersionFilters = versionFilters[hit.project_id] || { gameVersions: [], loaders: [], versionType: 'all' };
                   const currentVersionDropdownUIState = versionDropdownUIState[hit.project_id] || { showAllGameVersions: false, gameVersionSearchTerm: '' };
                   const currentOpenVersionDropdowns = openVersionDropdowns[hit.project_id] || { type: false, gameVersion: false, loader: false };
-                  const projectNoRiskStatus = getProjectNoRiskStatus(hit);
+                  const projectCopperStatus = getProjectCopperStatus(hit);
 
                   return (
                     <ModrinthProjectCardV2
@@ -3225,7 +3225,7 @@ export function ModrinthSearchV2({
                       onDeleteVersionClick={handleDeleteVersionFromProfile}
                       onToggleEnableClick={handleToggleEnableVersion}
                       isBlocked={isProjectBlocked(hit)}
-                      projectNoRiskStatus={projectNoRiskStatus}
+                      projectCopperStatus={projectCopperStatus}
                     />
                   );
                 })}
@@ -3269,7 +3269,7 @@ export function ModrinthSearchV2({
                   const currentVersionFilters = versionFilters[hit.project_id] || { gameVersions: [], loaders: [], versionType: 'all' };
                   const currentVersionDropdownUIState = versionDropdownUIState[hit.project_id] || { showAllGameVersions: false, gameVersionSearchTerm: '' };
                   const currentOpenVersionDropdowns = openVersionDropdowns[hit.project_id] || { type: false, gameVersion: false, loader: false };
-                  const projectNoRiskStatus = getProjectNoRiskStatus(hit);
+                  const projectCopperStatus = getProjectCopperStatus(hit);
 
                   return (
                     <ModrinthProjectCardV2
@@ -3310,7 +3310,7 @@ export function ModrinthSearchV2({
                       onDeleteVersionClick={handleDeleteVersionFromProfile}
                       onToggleEnableClick={handleToggleEnableVersion}
                       isBlocked={isProjectBlocked(hit)}
-                      projectNoRiskStatus={projectNoRiskStatus}
+                      projectCopperStatus={projectCopperStatus}
                     />
                   );
                 }}

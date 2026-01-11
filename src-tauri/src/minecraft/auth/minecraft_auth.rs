@@ -35,10 +35,10 @@ use axum::{
 use tokio::net::TcpListener;
 
 use crate::config::{ProjectDirsExt, HTTP_CLIENT, LAUNCHER_DIRECTORY};
-use crate::minecraft::api::NoRiskApi;
+use crate::minecraft::api::CopperApi;
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct NoRiskTokenClaims {
+pub struct CopperTokenClaims {
     exp: usize,
     username: String,
 }
@@ -60,7 +60,7 @@ pub struct Credentials {
     pub access_token: String,
     pub refresh_token: String,
     pub expires: DateTime<Utc>,
-    pub norisk_credentials: NoRiskCredentials,
+    pub norisk_credentials: CopperCredentials,
     pub active: bool,
     /// The authentication flow used to create this account (optional for backwards compatibility)
     #[serde(default)]
@@ -68,18 +68,18 @@ pub struct Credentials {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct NoRiskCredentials {
-    pub production: Option<NoRiskToken>,
-    pub experimental: Option<NoRiskToken>,
+pub struct CopperCredentials {
+    pub production: Option<CopperToken>,
+    pub experimental: Option<CopperToken>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct NoRiskToken {
+pub struct CopperToken {
     pub value: String,
     //TODO habs nichts hinbekommen jetzt erstmal bei jedem restart, pub expires: DateTime<Utc>,
 }
 
-impl NoRiskCredentials {
+impl CopperCredentials {
     pub async fn get_token(&self) -> Result<String> {
         Ok(self
             .production
@@ -89,7 +89,7 @@ impl NoRiskCredentials {
             .clone())
     }
 
-    /// Gets the appropriate NoRisk token based on the experimental mode setting.
+    /// Gets the appropriate Copper token based on the experimental mode setting.
     ///
     /// # Arguments
     /// * `is_experimental` - Whether to retrieve the experimental token.
@@ -108,7 +108,7 @@ impl NoRiskCredentials {
             .map(|token| token.value.clone())
             .ok_or_else(|| {
                 error!(
-                    "No NoRisk token found for {} mode.",
+                    "No Copper token found for {} mode.",
                     if is_experimental {
                         "experimental"
                     } else {
@@ -651,7 +651,7 @@ impl MinecraftAuthStore {
             expires: oauth_token.date + Duration::seconds(oauth_token.value.expires_in as i64),
             norisk_credentials: match existing_account {
                 Some(ref account) => account.norisk_credentials.clone(),
-                None => NoRiskCredentials {
+                None => CopperCredentials {
                     production: None,
                     experimental: None,
                 },
@@ -723,7 +723,7 @@ impl MinecraftAuthStore {
             expires: oauth_token.date + Duration::seconds(oauth_token.value.expires_in as i64),
             norisk_credentials: match existing_account {
                 Some(ref account) => account.norisk_credentials.clone(),
-                None => NoRiskCredentials {
+                None => CopperCredentials {
                     production: None,
                     experimental: None,
                 },
@@ -748,7 +748,7 @@ impl MinecraftAuthStore {
         experimental_mode: bool,
     ) -> Result<Credentials> {
         info!(
-            "[Token Refresh] Starting NoRisk token refresh check for user: {}",
+            "[Token Refresh] Starting Copper token refresh check for user: {}",
             creds.username
         );
         let mut maybe_update = false;
@@ -765,7 +765,7 @@ impl MinecraftAuthStore {
                 let key = DecodingKey::from_secret(&[]);
                 let mut validation = Validation::new(Algorithm::HS256);
                 validation.insecure_disable_signature_validation();
-                match decode::<NoRiskTokenClaims>(&token.value, &key, &validation) {
+                match decode::<CopperTokenClaims>(&token.value, &key, &validation) {
                     Ok(data) => {
                         info!(
                             "[Token Refresh] Token expiration check - Expires at: {}",
@@ -810,12 +810,12 @@ impl MinecraftAuthStore {
                 force_update, maybe_update, system_id
             );
 
-            // Use NoRiskApi for token refresh with proper error handling
-            info!("[NoRisk Token] Starting token refresh using NoRiskApi");
+            // Use CopperApi for token refresh with proper error handling
+            info!("[Copper Token] Starting token refresh using CopperApi");
 
             // Use the experimental_mode parameter instead of hardcoded value
             info!(
-                "[NoRisk Token] Mode: {}",
+                "[Copper Token] Mode: {}",
                 if experimental_mode {
                     "Experimental"
                 } else {
@@ -823,7 +823,7 @@ impl MinecraftAuthStore {
                 }
             );
 
-            match NoRiskApi::refresh_norisk_token_v3(
+            match CopperApi::refresh_norisk_token_v3(
                 &system_id,
                 &creds.username,
                 &creds.access_token,
@@ -834,27 +834,27 @@ impl MinecraftAuthStore {
             .await
             {
                 Ok(norisk_token) => {
-                    info!("[NoRisk Token] Successfully refreshed token");
+                    info!("[Copper Token] Successfully refreshed token");
                     let mut copied_credentials = creds.clone();
 
                     if experimental_mode {
-                        info!("[NoRisk Token] Storing token in experimental credentials");
+                        info!("[Copper Token] Storing token in experimental credentials");
                         copied_credentials.norisk_credentials.experimental = Some(norisk_token);
                     } else {
-                        info!("[NoRisk Token] Storing token in production credentials");
+                        info!("[Copper Token] Storing token in production credentials");
                         copied_credentials.norisk_credentials.production = Some(norisk_token);
                     }
 
                     // Update the account in storage
-                    info!("[NoRisk Token] Updating account in storage");
+                    info!("[Copper Token] Updating account in storage");
                     self.update_or_insert(copied_credentials.clone()).await?;
 
                     info!("[Token Refresh] Token refresh completed successfully");
                     Ok(copied_credentials)
                 }
                 Err(e) => {
-                    info!("[NoRisk Token] Token refresh failed: {:?}", e);
-                    info!("[NoRisk Token] Falling back to original credentials");
+                    info!("[Copper Token] Token refresh failed: {:?}", e);
+                    info!("[Copper Token] Falling back to original credentials");
                     // Return the original credentials if token refresh fails
                     Ok(creds.clone())
                 }
@@ -989,12 +989,12 @@ impl MinecraftAuthStore {
 
     /// Gets an account by ID and refreshes its tokens if necessary.
     /// 
-    /// This method retrieves an account by its ID, refreshes Microsoft and NoRisk tokens
+    /// This method retrieves an account by its ID, refreshes Microsoft and Copper tokens
     /// if needed, updates the account in storage, and returns the refreshed credentials.
     /// 
     /// # Arguments
     /// * `id` - The UUID of the account to retrieve
-    /// * `experimental_mode` - Whether to use experimental mode for NoRisk token refresh
+    /// * `experimental_mode` - Whether to use experimental mode for Copper token refresh
     /// 
     /// # Returns
     /// * `Ok(Some(Credentials))` - The refreshed account credentials
@@ -1133,7 +1133,7 @@ impl MinecraftAuthStore {
             }
         } else {
             info!("[Token Check] Microsoft token is still valid");
-            info!("[Token Check] Checking NoRisk token status");
+            info!("[Token Check] Checking Copper token status");
             Ok(Some(
                 self.refresh_norisk_token_if_necessary(&creds.clone(), false, experimental_mode)
                     .await?,

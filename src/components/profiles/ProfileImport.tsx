@@ -170,7 +170,7 @@ export function ProfileImport({
                       className="w-5 h-5 text-green-400"
                     />
                   </div>
-                  <span>.noriskpack (NoRisk Launcher)</span>
+                  <span>.noriskpack (Copper Launcher)</span>
                 </li>
                 <li className="flex items-center">
                   <div

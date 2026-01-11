@@ -329,7 +329,7 @@ impl MinecraftLauncher {
         command.arg(format!("-Xmx{}M", params.memory_max_mb));
 
         // Check if custom JVM args contain a custom GC setting
-        //fix for https://github.com/NoRiskClient/issues/issues/2357
+        //fix for https://github.com/CopperClient/issues/issues/2357
         let custom_gc_patterns = [
             "-XX:+UseZGC",
             "-XX:+UseG1GC",
@@ -354,8 +354,8 @@ impl MinecraftLauncher {
             command.arg("-XX:G1HeapRegionSize=32M");
         }
 
-        // Add NoRisk client specific parameters
-        // Only add token if we have credentials AND a NoRisk pack is selected in the profile
+        // Add Copper client specific parameters
+        // Only add token if we have credentials AND a Copper pack is selected in the profile
         let has_norisk_pack = profile.as_ref().and_then(|p| p.selected_norisk_pack_id.as_ref()).is_some();
 
         // Add profile name for ingame display
@@ -365,31 +365,31 @@ impl MinecraftLauncher {
 
         if let Some(creds) = &self.credentials {
             if has_norisk_pack {
-                // Get the appropriate NoRisk token based on experimental mode setting
+                // Get the appropriate Copper token based on experimental mode setting
                 if let Some(norisk_token) = if params.is_experimental_mode {
-                    info!("[NoRisk Launcher] Using experimental mode token");
+                    info!("[Copper Launcher] Using experimental mode token");
                     creds
                         .norisk_credentials
                         .experimental
                         .as_ref()
                         .map(|t| &t.value)
                 } else {
-                    info!("[NoRisk Launcher] Using production mode token");
+                    info!("[Copper Launcher] Using production mode token");
                     creds
                         .norisk_credentials
                         .production
                         .as_ref()
                         .map(|t| &t.value)
                 } {
-                    info!("[NoRisk Launcher] Adding NoRisk token to launch parameters");
+                    info!("[Copper Launcher] Adding Copper token to launch parameters");
                     command.arg(format!("-Dnorisk.token={}", norisk_token));
                 } else {
-                    info!("[NoRisk Launcher] No NoRisk token available for the selected mode");
+                    info!("[Copper Launcher] No Copper token available for the selected mode");
                 }
 
                 // Add experimental mode parameter
                 info!(
-                    "[NoRisk Launcher] Setting experimental mode: {}",
+                    "[Copper Launcher] Setting experimental mode: {}",
                     params.is_experimental_mode
                 );
                 command.arg(format!(
@@ -397,10 +397,10 @@ impl MinecraftLauncher {
                     params.is_experimental_mode
                 ));
             } else {
-                info!("[NoRisk Launcher] No NoRisk pack selected, skipping NoRisk token and experimental mode parameters");
+                info!("[Copper Launcher] No Copper pack selected, skipping Copper token and experimental mode parameters");
             }
         } else {
-            info!("[NoRisk Launcher] No credentials available, skipping NoRisk parameters");
+            info!("[Copper Launcher] No credentials available, skipping Copper parameters");
         }
 
         // Add Fabric specific mods folder argument if loader is Fabric

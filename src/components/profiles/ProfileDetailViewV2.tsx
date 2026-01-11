@@ -666,14 +666,14 @@ export function ProfileDetailViewV2({
                 {activeContentTab === "nrc" && (
                   <LocalContentTabV2<LocalContentItem>
                     profile={currentProfile}
-                    contentType="NoRiskMod"
+                    contentType="CopperMod"
                     getDisplayFileName={getGenericDisplayFileName}
-                    itemTypeName="NoRisk Mod"
-                    itemTypeNamePlural="NoRisk Mods"
-                    addContentButtonText="Add NoRisk Mods"
+                    itemTypeName="Copper Mod"
+                    itemTypeNamePlural="Copper Mods"
+                    addContentButtonText="Add Copper Mods"
                     emptyStateIconOverride="solar:shield-check-bold-duotone"
                     onRefreshRequired={async () => {
-                      // Force refresh of profile data when NoRisk pack changes
+                      // Force refresh of profile data when Copper pack changes
                       try {
                         // Fetch the updated profile from the store
                         await fetchProfiles();
@@ -757,7 +757,7 @@ export function ProfileDetailViewV2({
                   >
                     <Icon icon="solar:shield-check-bold" className="w-5 h-5 flex-shrink-0" />
                     <span className="font-minecraft-ten text-sm uppercase tracking-wide">
-                      NoRisk Client
+                      Copper Client
                     </span>
                   </button>
                 </div>

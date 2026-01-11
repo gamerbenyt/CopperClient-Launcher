@@ -1,7 +1,7 @@
 use crate::config::{ProjectDirsExt, LAUNCHER_DIRECTORY};
 use crate::error::Result;
 use crate::integrations::norisk_versions::NoriskVersionsConfig;
-use crate::minecraft::api::norisk_api::NoRiskApi;
+use crate::minecraft::api::norisk_api::CopperApi;
 use crate::state::post_init::PostInitializationHandler;
 use crate::state::state_manager::State;
 use async_trait::async_trait;
@@ -60,7 +60,7 @@ impl NoriskVersionManager {
         info!("Fetching latest Norisk versions config from API...");
 
         // Assuming placeholder token/flag is okay, like for packs
-        match NoRiskApi::get_standard_versions(norisk_token, is_experimental).await {
+        match CopperApi::get_standard_versions(norisk_token, is_experimental).await {
             Ok(new_config) => {
                 debug!(
                     "Successfully fetched {} standard profile definitions from API.",

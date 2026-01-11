@@ -1,6 +1,6 @@
 use crate::integrations::norisk_packs::NoriskModpacksConfig;
 use crate::integrations::norisk_versions::NoriskVersionsConfig;
-use crate::minecraft::auth::minecraft_auth::NoRiskToken;
+use crate::minecraft::auth::minecraft_auth::CopperToken;
 use crate::minecraft::dto::norisk_meta::NoriskAssets;
 use crate::state::process_state::ProcessMetadata;
 use crate::{
@@ -98,10 +98,6 @@ pub enum Reward {
         #[serde(rename = "endTimestamp")]
         end_timestamp: String,
     },
-    #[serde(rename = "NrcPlus")]
-    NrcPlusReward {
-        duration: i64,
-    },
     #[serde(rename = "Theme")]
     ThemeReward {
         #[serde(rename = "themeId")]
@@ -121,42 +117,42 @@ pub struct AdventCalendarDay {
     pub shop_item_model_url: Option<String>,
 }
 
-pub struct NoRiskApi;
+pub struct CopperApi;
 
-impl NoRiskApi {
+impl CopperApi {
     pub fn new() -> Self {
         Self
     }
 
     pub fn get_api_base(is_experimental: bool) -> String {
         if is_experimental {
-            debug!("[NoRisk API] Using experimental API endpoint");
+            debug!("[Copper API] Using experimental API endpoint");
             String::from("https://api-staging.norisk.gg/api/v1")
         } else {
-            debug!("[NoRisk API] Using production API endpoint");
+            debug!("[Copper API] Using production API endpoint");
             String::from("https://api.norisk.gg/api/v1")
         }
     }
 
-    /// Request a new server ID from NoRisk API for secure authentication
+    /// Request a new server ID from Copper API for secure authentication
     pub async fn request_server_id(is_experimental: bool) -> Result<ServerIdResponse> {
         let base_url = Self::get_api_base(is_experimental);
         let url = format!("{}/launcher/auth/request-server-id", base_url);
 
-        debug!("[NoRisk API] Requesting new server ID");
-        debug!("[NoRisk API] Full URL: {}", url);
+        debug!("[Copper API] Requesting new server ID");
+        debug!("[Copper API] Full URL: {}", url);
 
         let response = HTTP_CLIENT
             .post(url)
             .send()
             .await
             .map_err(|e| {
-                error!("[NoRisk API] Server ID request failed: {}", e);
-                AppError::RequestError(format!("Failed to request server ID from NoRisk API: {}", e))
+                error!("[Copper API] Server ID request failed: {}", e);
+                AppError::RequestError(format!("Failed to request server ID from Copper API: {}", e))
             })?;
 
         let status = response.status();
-        debug!("[NoRisk API] Server ID request response status: {}", status);
+        debug!("[Copper API] Server ID request response status: {}", status);
 
         if !status.is_success() {
             let error_body = response
@@ -164,33 +160,33 @@ impl NoRiskApi {
                 .await
                 .unwrap_or_else(|_| "Failed to read error body".to_string());
             error!(
-                "[NoRisk API] Server ID request error response: Status {}, Body: {}",
+                "[Copper API] Server ID request error response: Status {}, Body: {}",
                 status, error_body
             );
             return Err(AppError::RequestError(format!(
-                "NoRisk API returned error status for server ID request: {}, Body: {}",
+                "Copper API returned error status for server ID request: {}, Body: {}",
                 status, error_body
             )));
         }
 
-        debug!("[NoRisk API] Parsing server ID response as JSON");
+        debug!("[Copper API] Parsing server ID response as JSON");
         match response.json::<ServerIdResponse>().await {
             Ok(server_response) => {
                 let server_id = &server_response.server_id;
                 if !server_id.starts_with("nrc-") {
-                    error!("[NoRisk API] Invalid server ID received: {}", server_id);
+                    error!("[Copper API] Invalid server ID received: {}", server_id);
                     return Err(AppError::RequestError(format!(
-                        "Invalid server ID received from NoRisk API: {}",
+                        "Invalid server ID received from Copper API: {}",
                         server_id
                     )));
                 }
                 
-                info!("[NoRisk API] Server ID request successful: {}", server_id);
+                info!("[Copper API] Server ID request successful: {}", server_id);
                 Ok(server_response)
             }
             Err(e) => {
-                error!("[NoRisk API] Failed to parse server ID response: {}", e);
-                Err(AppError::ParseError(format!("Failed to parse NoRisk API server ID response: {}", e)))
+                error!("[Copper API] Failed to parse server ID response: {}", e);
+                Err(AppError::ParseError(format!("Failed to parse Copper API server ID response: {}", e)))
             }
         }
     }
@@ -205,24 +201,24 @@ impl NoRiskApi {
         let base_url = Self::get_api_base(is_experimental);
         let url = format!("{}/{}", base_url, endpoint);
 
-        debug!("[NoRisk API] Making request to endpoint: {}", endpoint);
-        debug!("[NoRisk API] Full URL: {}", url);
+        debug!("[Copper API] Making request to endpoint: {}", endpoint);
+        debug!("[Copper API] Full URL: {}", url);
 
         let mut query_params: HashMap<&str, &str> = HashMap::new();
         if !params.is_empty() {
             query_params.insert("params", params);
-            debug!("[NoRisk API] Added base params: {}", params);
+            debug!("[Copper API] Added base params: {}", params);
         }
 
         if let Some(extra) = extra_params {
             for (key, value) in extra {
                 query_params.insert(key, value);
-                debug!("[NoRisk API] Added extra param: {} = {}", key, value);
+                debug!("[Copper API] Added extra param: {} = {}", key, value);
             }
         }
 
         debug!(
-            "[NoRisk API] Sending POST request with {} parameters",
+            "[Copper API] Sending POST request with {} parameters",
             query_params.len()
         );
         let response = HTTP_CLIENT
@@ -232,25 +228,25 @@ impl NoRiskApi {
             .send()
             .await
             .map_err(|e| {
-                error!("[NoRisk API] Request failed: {}", e);
-                AppError::RequestError(format!("Failed to send request to NoRisk API: {}", e))
+                error!("[Copper API] Request failed: {}", e);
+                AppError::RequestError(format!("Failed to send request to Copper API: {}", e))
             })?;
 
         let status = response.status();
-        debug!("[NoRisk API] Response status: {}", status);
+        debug!("[Copper API] Response status: {}", status);
 
         if !status.is_success() {
-            error!("[NoRisk API] Error response: Status {}", status);
+            error!("[Copper API] Error response: Status {}", status);
             return Err(AppError::RequestError(format!(
-                "NoRisk API returned error status: {}",
+                "Copper API returned error status: {}",
                 status
             )));
         }
 
-        debug!("[NoRisk API] Parsing response body as JSON");
+        debug!("[Copper API] Parsing response body as JSON");
         response.json::<T>().await.map_err(|e| {
-            error!("[NoRisk API] Failed to parse response: {}", e);
-            AppError::ParseError(format!("Failed to parse NoRisk API response: {}", e))
+            error!("[Copper API] Failed to parse response: {}", e);
+            AppError::ParseError(format!("Failed to parse Copper API response: {}", e))
         })
     }
 
@@ -263,39 +259,39 @@ impl NoRiskApi {
         let base_url = Self::get_api_base(is_experimental);
         let url = format!("{}/{}", base_url, endpoint);
 
-        debug!("[NoRisk API] Making GET request to endpoint: {}", endpoint);
-        debug!("[NoRisk API] Full URL: {}", url);
+        debug!("[Copper API] Making GET request to endpoint: {}", endpoint);
+        debug!("[Copper API] Full URL: {}", url);
 
         let mut request = HTTP_CLIENT
             .get(url)
             .header("Authorization", format!("Bearer {}", norisk_token));
 
         if let Some(extra) = extra_params {
-            debug!("[NoRisk API] Adding {} query parameters", extra.len());
+            debug!("[Copper API] Adding {} query parameters", extra.len());
             request = request.query(&extra);
         }
 
-        debug!("[NoRisk API] Sending GET request");
+        debug!("[Copper API] Sending GET request");
         let response = request.send().await.map_err(|e| {
-            error!("[NoRisk API] GET request failed: {}", e);
-            AppError::RequestError(format!("Failed to send GET request to NoRisk API: {}", e))
+            error!("[Copper API] GET request failed: {}", e);
+            AppError::RequestError(format!("Failed to send GET request to Copper API: {}", e))
         })?;
 
         let status = response.status();
-        debug!("[NoRisk API] Response status: {}", status);
+        debug!("[Copper API] Response status: {}", status);
 
         if !status.is_success() {
-            error!("[NoRisk API] Error response: Status {}", status);
+            error!("[Copper API] Error response: Status {}", status);
             return Err(AppError::RequestError(format!(
-                "NoRisk API returned error status: {}",
+                "Copper API returned error status: {}",
                 status
             )));
         }
 
-        debug!("[NoRisk API] Parsing response body as JSON");
+        debug!("[Copper API] Parsing response body as JSON");
         response.json::<T>().await.map_err(|e| {
-            error!("[NoRisk API] Failed to parse response: {}", e);
-            AppError::ParseError(format!("Failed to parse NoRisk API response: {}", e))
+            error!("[Copper API] Failed to parse response: {}", e);
+            AppError::ParseError(format!("Failed to parse Copper API response: {}", e))
         })
     }
 
@@ -309,44 +305,44 @@ impl NoRiskApi {
         let url = format!("{}/{}", base_url, endpoint);
 
         debug!(
-            "[NoRisk API] Making DELETE request to endpoint: {}",
+            "[Copper API] Making DELETE request to endpoint: {}",
             endpoint
         );
-        debug!("[NoRisk API] Full URL: {}", url);
+        debug!("[Copper API] Full URL: {}", url);
 
         let mut request = HTTP_CLIENT
             .delete(url)
             .header("Authorization", format!("Bearer {}", norisk_token));
 
         if let Some(extra) = extra_params {
-            debug!("[NoRisk API] Adding {} query parameters", extra.len());
+            debug!("[Copper API] Adding {} query parameters", extra.len());
             request = request.query(&extra);
         }
 
-        debug!("[NoRisk API] Sending DELETE request");
+        debug!("[Copper API] Sending DELETE request");
         let response = request.send().await.map_err(|e| {
-            error!("[NoRisk API] DELETE request failed: {}", e);
+            error!("[Copper API] DELETE request failed: {}", e);
             AppError::RequestError(format!(
-                "Failed to send DELETE request to NoRisk API: {}",
+                "Failed to send DELETE request to Copper API: {}",
                 e
             ))
         })?;
 
         let status = response.status();
-        debug!("[NoRisk API] Response status: {}", status);
+        debug!("[Copper API] Response status: {}", status);
 
         if !status.is_success() {
-            error!("[NoRisk API] Error response: Status {}", status);
+            error!("[Copper API] Error response: Status {}", status);
             return Err(AppError::RequestError(format!(
-                "NoRisk API returned error status: {}",
+                "Copper API returned error status: {}",
                 status
             )));
         }
 
-        debug!("[NoRisk API] Reading response body as text");
+        debug!("[Copper API] Reading response body as text");
         response.text().await.map_err(|e| {
-            error!("[NoRisk API] Failed to read response text: {}", e);
-            AppError::ParseError(format!("Failed to read NoRisk API response text: {}", e))
+            error!("[Copper API] Failed to read response text: {}", e);
+            AppError::ParseError(format!("Failed to read Copper API response text: {}", e))
         })
     }
 
@@ -359,30 +355,30 @@ impl NoRiskApi {
         selected_profile: &str,
         force: bool,
         is_experimental: bool,
-    ) -> Result<NoRiskToken> {
-        info!("[NoRisk API] Refreshing NoRisk token v3 with SystemID: {}", system_id);
-        debug!("[NoRisk API] Username: {}", username);
-        debug!("[NoRisk API] Force refresh: {}", force);
-        debug!("[NoRisk API] Experimental mode: {}", is_experimental);
+    ) -> Result<CopperToken> {
+        info!("[Copper API] Refreshing Copper token v3 with SystemID: {}", system_id);
+        debug!("[Copper API] Username: {}", username);
+        debug!("[Copper API] Force refresh: {}", force);
+        debug!("[Copper API] Experimental mode: {}", is_experimental);
 
-        // Step 1: Request server ID from NoRisk API
-        debug!("[NoRisk API] Step 1: Requesting server ID from NoRisk API");
+        // Step 1: Request server ID from Copper API
+        debug!("[Copper API] Step 1: Requesting server ID from Copper API");
         let server_response = Self::request_server_id(is_experimental).await?;
         let server_id = &server_response.server_id;
-        info!("[NoRisk API] Received server ID: {}", server_id);
+        info!("[Copper API] Received server ID: {}", server_id);
 
         // Step 2: Join the Minecraft server session (client-side authentication)
-        debug!("[NoRisk API] Step 2: Joining Minecraft server session with server ID: {}", server_id);
+        debug!("[Copper API] Step 2: Joining Minecraft server session with server ID: {}", server_id);
         let mc_api = crate::minecraft::api::mc_api::MinecraftApiService::new();
         mc_api.join_server_session(access_token, selected_profile, server_id).await?;
-        info!("[NoRisk API] Successfully joined Minecraft server session");
+        info!("[Copper API] Successfully joined Minecraft server session");
 
-        // Step 3: Call NoRisk API v2 (server will verify with has_joined)
+        // Step 3: Call Copper API v2 (server will verify with has_joined)
         let base_url = Self::get_api_base(is_experimental);
         let url = format!("{}/launcher/auth/validate/v2", base_url);
 
-        debug!("[NoRisk API] Step 3: Making POST request to auth/validate/v2 endpoint");
-        debug!("[NoRisk API] Full URL: {}", url);
+        debug!("[Copper API] Step 3: Making POST request to auth/validate/v2 endpoint");
+        debug!("[Copper API] Full URL: {}", url);
 
         // All parameters as query parameters
         let force_str = force.to_string();
@@ -392,19 +388,19 @@ impl NoRiskApi {
         query_params.insert("username", username);
         query_params.insert("server_id", server_id);
 
-        debug!("[NoRisk API] Sending POST request with server-provided server ID");
+        debug!("[Copper API] Sending POST request with server-provided server ID");
         let response = HTTP_CLIENT
             .post(url)
             .query(&query_params)
             .send()
             .await
             .map_err(|e| {
-                error!("[NoRisk API] v3 token refresh request failed: {}", e);
-                AppError::RequestError(format!("Failed to send v3 token refresh request to NoRisk API: {}", e))
+                error!("[Copper API] v3 token refresh request failed: {}", e);
+                AppError::RequestError(format!("Failed to send v3 token refresh request to Copper API: {}", e))
             })?;
 
         let status = response.status();
-        debug!("[NoRisk API] v3 token refresh response status: {}", status);
+        debug!("[Copper API] v3 token refresh response status: {}", status);
 
         if !status.is_success() {
             let error_body = response
@@ -412,25 +408,25 @@ impl NoRiskApi {
                 .await
                 .unwrap_or_else(|_| "Failed to read error body".to_string());
             error!(
-                "[NoRisk API] v3 token refresh error response: Status {}, Body: {}",
+                "[Copper API] v3 token refresh error response: Status {}, Body: {}",
                 status, error_body
             );
             return Err(AppError::RequestError(format!(
-                "NoRisk API v3 returned error status: {}, Body: {}",
+                "Copper API v3 returned error status: {}, Body: {}",
                 status, error_body
             )));
         }
 
-        debug!("[NoRisk API] Parsing v3 token refresh response body as JSON");
-        match response.json::<NoRiskToken>().await {
+        debug!("[Copper API] Parsing v3 token refresh response body as JSON");
+        match response.json::<CopperToken>().await {
             Ok(token) => {
-                info!("[NoRisk API] v3 token refresh successful");
-                debug!("[NoRisk API] Token valid status: {}", token.value.len() > 0);
+                info!("[Copper API] v3 token refresh successful");
+                debug!("[Copper API] Token valid status: {}", token.value.len() > 0);
                 Ok(token)
             }
             Err(e) => {
-                error!("[NoRisk API] Failed to parse v3 token refresh response: {}", e);
-                Err(AppError::ParseError(format!("Failed to parse NoRisk API v3 response: {}", e)))
+                error!("[Copper API] Failed to parse v3 token refresh response: {}", e);
+                Err(AppError::ParseError(format!("Failed to parse Copper API v3 response: {}", e)))
             }
         }
     }
@@ -442,7 +438,7 @@ impl NoRiskApi {
         is_experimental: bool,
     ) -> Result<T> {
         debug!(
-            "[NoRisk API] Request from endpoint: {} with UUID: {}",
+            "[Copper API] Request from endpoint: {} with UUID: {}",
             endpoint, request_uuid
         );
         let mut extra_params = HashMap::new();
@@ -464,11 +460,11 @@ impl NoRiskApi {
         request_uuid: Option<&str>,
         is_experimental: bool,
     ) -> Result<T> {
-        debug!("[NoRisk API] GET request from endpoint: {}", endpoint);
+        debug!("[Copper API] GET request from endpoint: {}", endpoint);
 
         let mut extra_params = HashMap::new();
         if let Some(uuid) = request_uuid {
-            debug!("[NoRisk API] Adding UUID: {}", uuid);
+            debug!("[Copper API] Adding UUID: {}", uuid);
             extra_params.insert("uuid", uuid);
         }
 
@@ -497,26 +493,26 @@ impl NoRiskApi {
         .await
     }
 
-    /// Fetches the complete modpack configuration from the NoRisk API.
+    /// Fetches the complete modpack configuration from the Copper API.
     pub async fn get_modpacks(
         norisk_token: &str,
         is_experimental: bool,
     ) -> Result<NoriskModpacksConfig> {
         debug!(
-            "[NoRisk API] Fetching modpack configuration. Experimental: {}",
+            "[Copper API] Fetching modpack configuration. Experimental: {}",
             is_experimental
         );
         Self::get_from_norisk_endpoint("launcher/modpacks", norisk_token, None, is_experimental)
             .await
     }
 
-    /// Fetches the standard version profiles from the NoRisk API.
+    /// Fetches the standard version profiles from the Copper API.
     pub async fn get_standard_versions(
         norisk_token: &str,
         is_experimental: bool,
     ) -> Result<NoriskVersionsConfig> {
         debug!(
-            "[NoRisk API] Fetching standard version profiles. Experimental: {}",
+            "[Copper API] Fetching standard version profiles. Experimental: {}",
             is_experimental
         );
         Self::get_from_norisk_endpoint("launcher/versions", norisk_token, None, is_experimental)
@@ -530,7 +526,7 @@ impl NoRiskApi {
         is_experimental: bool,
     ) -> Result<bool> {
         debug!(
-            "[NoRisk API] Requesting Discord link status with UUID: {}",
+            "[Copper API] Requesting Discord link status with UUID: {}",
             request_uuid
         );
         Self::get_from_norisk_endpoint(
@@ -549,7 +545,7 @@ impl NoRiskApi {
         is_experimental: bool,
     ) -> Result<String> {
         debug!(
-            "[NoRisk API] Requesting Discord unlink with UUID: {}",
+            "[Copper API] Requesting Discord unlink with UUID: {}",
             request_uuid
         );
         let mut extra_params = HashMap::new();
@@ -571,7 +567,7 @@ impl NoRiskApi {
         is_experimental: bool,
     ) -> Result<bool> {
         debug!(
-            "[NoRisk API] Requesting GitHub link status with UUID: {}",
+            "[Copper API] Requesting GitHub link status with UUID: {}",
             request_uuid
         );
         Self::get_from_norisk_endpoint(
@@ -590,7 +586,7 @@ impl NoRiskApi {
         is_experimental: bool,
     ) -> Result<String> {
         debug!(
-            "[NoRisk API] Requesting GitHub unlink with UUID: {}",
+            "[Copper API] Requesting GitHub unlink with UUID: {}",
             request_uuid
         );
         let mut extra_params = HashMap::new();
@@ -605,7 +601,7 @@ impl NoRiskApi {
         .await
     }
 
-    /// Submits a crash log to the NoRisk API.
+    /// Submits a crash log to the Copper API.
     pub async fn submit_crash_log(
         norisk_token: &str,
         crash_log_data: &CrashlogDto,
@@ -617,12 +613,12 @@ impl NoRiskApi {
         let url = format!("{}/{}", base_url, endpoint);
 
         debug!(
-            "[NoRisk API] Submitting crash log to endpoint: {}",
+            "[Copper API] Submitting crash log to endpoint: {}",
             endpoint
         );
-        debug!("[NoRisk API] Full URL: {}", url);
-        debug!("[NoRisk API] With request UUID: {}", request_uuid);
-        debug!("[NoRisk API] Crash log data: {:?}", crash_log_data);
+        debug!("[Copper API] Full URL: {}", url);
+        debug!("[Copper API] With request UUID: {}", request_uuid);
+        debug!("[Copper API] Crash log data: {:?}", crash_log_data);
 
         let response = HTTP_CLIENT
             .post(url)
@@ -632,13 +628,13 @@ impl NoRiskApi {
             .send()
             .await
             .map_err(|e| {
-                error!("[NoRisk API] Crash log submission request failed: {}", e);
-                AppError::RequestError(format!("Failed to send crash log to NoRisk API: {}", e))
+                error!("[Copper API] Crash log submission request failed: {}", e);
+                AppError::RequestError(format!("Failed to send crash log to Copper API: {}", e))
             })?;
 
         let status = response.status();
         debug!(
-            "[NoRisk API] Crash log submission response status: {}",
+            "[Copper API] Crash log submission response status: {}",
             status
         );
 
@@ -648,16 +644,16 @@ impl NoRiskApi {
                 .await
                 .unwrap_or_else(|_| "Failed to read error body".to_string());
             error!(
-                "[NoRisk API] Crash log submission error response: Status {}, Body: {}",
+                "[Copper API] Crash log submission error response: Status {}, Body: {}",
                 status, error_body
             );
             return Err(AppError::RequestError(format!(
-                "NoRisk API returned error status for crash log: {}, Body: {}",
+                "Copper API returned error status for crash log: {}, Body: {}",
                 status, error_body
             )));
         }
 
-        info!("[NoRisk API] Crash log submitted successfully.");
+        info!("[Copper API] Crash log submitted successfully.");
         Ok(())
     }
 
@@ -670,8 +666,8 @@ impl NoRiskApi {
         let endpoint = "mcreal/user/mobileAppToken";
         let url = format!("{}/{}", base_url, endpoint);
         
-        info!("[NoRisk API] Requesting mcreal app token");
-        debug!("[NoRisk API] Full URL: {}", url);
+        info!("[Copper API] Requesting mcreal app token");
+        debug!("[Copper API] Full URL: {}", url);
         
         let response = HTTP_CLIENT
             .get(url)
@@ -680,12 +676,12 @@ impl NoRiskApi {
             .send()
             .await
             .map_err(|e| {
-                error!("[NoRisk API] McReal app token request failed: {}", e);
-                AppError::RequestError(format!("Failed to get mobile app token from NoRisk API: {}", e))
+                error!("[Copper API] McReal app token request failed: {}", e);
+                AppError::RequestError(format!("Failed to get mobile app token from Copper API: {}", e))
             })?;
 
         let status = response.status();
-        debug!("[NoRisk API] McReal app token response status: {}", status);
+        debug!("[Copper API] McReal app token response status: {}", status);
 
         if !status.is_success() {
             let error_body = response
@@ -693,18 +689,18 @@ impl NoRiskApi {
                 .await
                 .unwrap_or_else(|_| "Failed to read error body".to_string());
             error!(
-                "[NoRisk API] McReal app token error response: Status {}, Body: {}",
+                "[Copper API] McReal app token error response: Status {}, Body: {}",
                 status, error_body
             );
             return Err(AppError::RequestError(format!(
-                "NoRisk API returned error status for mobile app token: {}, Body: {}",
+                "Copper API returned error status for mobile app token: {}, Body: {}",
                 status, error_body
             )));
         }
 
         response.text().await.map_err(|e| {
-            error!("[NoRisk API] Failed to read mobile app token response: {}", e);
-            AppError::ParseError(format!("Failed to read NoRisk API mobile app token response: {}", e))
+            error!("[Copper API] Failed to read mobile app token response: {}", e);
+            AppError::ParseError(format!("Failed to read Copper API mobile app token response: {}", e))
         })
     }
 
@@ -717,8 +713,8 @@ impl NoRiskApi {
         let endpoint = "mcreal/user/mobileAppToken/reset";
         let url = format!("{}/{}", base_url, endpoint);
         
-        info!("[NoRisk API] Resetting mcreal app token");
-        debug!("[NoRisk API] Full URL: {}", url);
+        info!("[Copper API] Resetting mcreal app token");
+        debug!("[Copper API] Full URL: {}", url);
         
         let response = HTTP_CLIENT
             .post(url)
@@ -727,12 +723,12 @@ impl NoRiskApi {
             .send()
             .await
             .map_err(|e| {
-                error!("[NoRisk API] McReal app token reset request failed: {}", e);
-                AppError::RequestError(format!("Failed to reset mobile app token from NoRisk API: {}", e))
+                error!("[Copper API] McReal app token reset request failed: {}", e);
+                AppError::RequestError(format!("Failed to reset mobile app token from Copper API: {}", e))
             })?;
 
         let status = response.status();
-        debug!("[NoRisk API] McReal app token reset response status: {}", status);
+        debug!("[Copper API] McReal app token reset response status: {}", status);
 
         if !status.is_success() {
             let error_body = response
@@ -740,37 +736,37 @@ impl NoRiskApi {
                 .await
                 .unwrap_or_else(|_| "Failed to read error body".to_string());
             error!(
-                "[NoRisk API] McReal app token reset error response: Status {}, Body: {}",
+                "[Copper API] McReal app token reset error response: Status {}, Body: {}",
                 status, error_body
             );
             return Err(AppError::RequestError(format!(
-                "NoRisk API returned error status for mobile app token reset: {}, Body: {}",
+                "Copper API returned error status for mobile app token reset: {}, Body: {}",
                 status, error_body
             )));
         }
 
         response.text().await.map_err(|e| {
-            error!("[NoRisk API] Failed to read mobile app token reset response: {}", e);
-            AppError::ParseError(format!("Failed to read NoRisk API mobile app token reset response: {}", e))
+            error!("[Copper API] Failed to read mobile app token reset response: {}", e);
+            AppError::ParseError(format!("Failed to read Copper API mobile app token reset response: {}", e))
         })
     }
 
-    /// Fetches the advent calendar data from the NoRisk API.
+    /// Fetches the advent calendar data from the Copper API.
     pub async fn get_advent_calendar(
         norisk_token: &str,
         request_uuid: &str,
         is_experimental: bool,
     ) -> Result<Vec<AdventCalendarDay>> {
         debug!(
-            "[NoRisk API] Fetching advent calendar. Experimental: {}",
+            "[Copper API] Fetching advent calendar. Experimental: {}",
             is_experimental
         );
         let base_url = Self::get_api_base(is_experimental);
         let endpoint = "core/advent/calendar";
         let url = format!("{}/{}", base_url, endpoint);
 
-        debug!("[NoRisk API] Making GET request to endpoint: {}", endpoint);
-        debug!("[NoRisk API] Full URL: {}", url);
+        debug!("[Copper API] Making GET request to endpoint: {}", endpoint);
+        debug!("[Copper API] Full URL: {}", url);
 
         let mut extra_params = HashMap::new();
         extra_params.insert("uuid", request_uuid);
@@ -779,17 +775,17 @@ impl NoRiskApi {
             .get(url)
             .header("Authorization", format!("Bearer {}", norisk_token));
 
-        debug!("[NoRisk API] Adding UUID query parameter: {}", request_uuid);
+        debug!("[Copper API] Adding UUID query parameter: {}", request_uuid);
         request = request.query(&extra_params);
 
-        debug!("[NoRisk API] Sending GET request");
+        debug!("[Copper API] Sending GET request");
         let response = request.send().await.map_err(|e| {
-            error!("[NoRisk API] GET request failed: {}", e);
-            AppError::RequestError(format!("Failed to send GET request to NoRisk API: {}", e))
+            error!("[Copper API] GET request failed: {}", e);
+            AppError::RequestError(format!("Failed to send GET request to Copper API: {}", e))
         })?;
 
         let status = response.status();
-        debug!("[NoRisk API] Response status: {}", status);
+        debug!("[Copper API] Response status: {}", status);
 
         if !status.is_success() {
             let error_body = response
@@ -797,22 +793,22 @@ impl NoRiskApi {
                 .await
                 .unwrap_or_else(|_| "Failed to read error body".to_string());
             error!(
-                "[NoRisk API] Error response: Status {}, Body: {}",
+                "[Copper API] Error response: Status {}, Body: {}",
                 status, error_body
             );
             return Err(AppError::RequestError(format!(
-                "NoRisk API returned error status: {}, Body: {}",
+                "Copper API returned error status: {}, Body: {}",
                 status, error_body
             )));
         }
 
-        debug!("[NoRisk API] Reading response body as text before parsing");
+        debug!("[Copper API] Reading response body as text before parsing");
         let response_text = response.text().await.map_err(|e| {
-            error!("[NoRisk API] Failed to read response text: {}", e);
-            AppError::ParseError(format!("Failed to read NoRisk API response text: {}", e))
+            error!("[Copper API] Failed to read response text: {}", e);
+            AppError::ParseError(format!("Failed to read Copper API response text: {}", e))
         })?;
 
-        debug!("[NoRisk API] Response body (first 500 chars): {}", 
+        debug!("[Copper API] Response body (first 500 chars): {}", 
             if response_text.len() > 500 {
                 format!("{}...", &response_text[..500])
             } else {
@@ -820,11 +816,11 @@ impl NoRiskApi {
             }
         );
 
-        debug!("[NoRisk API] Parsing response body as JSON");
+        debug!("[Copper API] Parsing response body as JSON");
         serde_json::from_str::<Vec<AdventCalendarDay>>(&response_text).map_err(|e| {
-            error!("[NoRisk API] Failed to parse response: {}", e);
-            error!("[NoRisk API] Full response body: {}", response_text);
-            AppError::ParseError(format!("Failed to parse NoRisk API response: {}. Response body: {}", e, response_text))
+            error!("[Copper API] Failed to parse response: {}", e);
+            error!("[Copper API] Full response body: {}", response_text);
+            AppError::ParseError(format!("Failed to parse Copper API response: {}. Response body: {}", e, response_text))
         })
     }
 
@@ -840,11 +836,11 @@ impl NoRiskApi {
         let url = format!("{}/{}", base_url, endpoint);
 
         debug!(
-            "[NoRisk API] Claiming advent calendar day {}",
+            "[Copper API] Claiming advent calendar day {}",
             tag
         );
-        debug!("[NoRisk API] Full URL: {}", url);
-        debug!("[NoRisk API] With request UUID: {}", request_uuid);
+        debug!("[Copper API] Full URL: {}", url);
+        debug!("[Copper API] With request UUID: {}", request_uuid);
 
         let response = HTTP_CLIENT
             .post(url)
@@ -853,13 +849,13 @@ impl NoRiskApi {
             .send()
             .await
             .map_err(|e| {
-                error!("[NoRisk API] Advent calendar claim request failed: {}", e);
+                error!("[Copper API] Advent calendar claim request failed: {}", e);
                 AppError::RequestError(format!("Failed to claim advent calendar day: {}", e))
             })?;
 
         let status = response.status();
         debug!(
-            "[NoRisk API] Advent calendar claim response status: {}",
+            "[Copper API] Advent calendar claim response status: {}",
             status
         );
 
@@ -869,22 +865,22 @@ impl NoRiskApi {
                 .await
                 .unwrap_or_else(|_| "Failed to read error body".to_string());
             error!(
-                "[NoRisk API] Advent calendar claim error response: Status {}, Body: {}",
+                "[Copper API] Advent calendar claim error response: Status {}, Body: {}",
                 status, error_body
             );
             return Err(AppError::RequestError(format!(
-                "NoRisk API returned error status for advent calendar claim: {}, Body: {}",
+                "Copper API returned error status for advent calendar claim: {}, Body: {}",
                 status, error_body
             )));
         }
 
-        debug!("[NoRisk API] Reading response body as text before parsing");
+        debug!("[Copper API] Reading response body as text before parsing");
         let response_text = response.text().await.map_err(|e| {
-            error!("[NoRisk API] Failed to read response text: {}", e);
-            AppError::ParseError(format!("Failed to read NoRisk API response text: {}", e))
+            error!("[Copper API] Failed to read response text: {}", e);
+            AppError::ParseError(format!("Failed to read Copper API response text: {}", e))
         })?;
 
-        debug!("[NoRisk API] Response body (first 500 chars): {}", 
+        debug!("[Copper API] Response body (first 500 chars): {}", 
             if response_text.len() > 500 {
                 format!("{}...", &response_text[..500])
             } else {
@@ -892,11 +888,11 @@ impl NoRiskApi {
             }
         );
 
-        debug!("[NoRisk API] Parsing advent calendar claim response body as JSON");
+        debug!("[Copper API] Parsing advent calendar claim response body as JSON");
         serde_json::from_str::<AdventCalendarDay>(&response_text).map_err(|e| {
-            error!("[NoRisk API] Failed to parse advent calendar claim response: {}", e);
-            error!("[NoRisk API] Full response body: {}", response_text);
-            AppError::ParseError(format!("Failed to parse NoRisk API advent calendar claim response: {}. Response body: {}", e, response_text))
+            error!("[Copper API] Failed to parse advent calendar claim response: {}", e);
+            error!("[Copper API] Full response body: {}", response_text);
+            AppError::ParseError(format!("Failed to parse Copper API advent calendar claim response: {}. Response body: {}", e, response_text))
         })
     }
 
@@ -914,8 +910,8 @@ impl NoRiskApi {
         let base_url = Self::get_api_base(is_experimental);
         let url = format!("{}/launcher/referral/report", base_url);
 
-        info!("[NoRisk API] Reporting referral code: {} for account: {}", code, account_id);
-        debug!("[NoRisk API] Full URL: {}", url);
+        info!("[Copper API] Reporting referral code: {} for account: {}", code, account_id);
+        debug!("[Copper API] Full URL: {}", url);
 
         #[derive(Serialize)]
         struct ReferralReportRequest<'a> {
@@ -932,12 +928,12 @@ impl NoRiskApi {
             .send()
             .await
             .map_err(|e| {
-                error!("[NoRisk API] Referral report request failed: {}", e);
+                error!("[Copper API] Referral report request failed: {}", e);
                 AppError::RequestError(format!("Failed to report referral code: {}", e))
             })?;
 
         let status = response.status();
-        debug!("[NoRisk API] Referral report response status: {}", status);
+        debug!("[Copper API] Referral report response status: {}", status);
 
         if !status.is_success() {
             let error_body = response
@@ -945,16 +941,16 @@ impl NoRiskApi {
                 .await
                 .unwrap_or_else(|_| "Failed to read error body".to_string());
             error!(
-                "[NoRisk API] Referral report error response: Status {}, Body: {}",
+                "[Copper API] Referral report error response: Status {}, Body: {}",
                 status, error_body
             );
             return Err(AppError::RequestError(format!(
-                "NoRisk API returned error status for referral report: {}, Body: {}",
+                "Copper API returned error status for referral report: {}, Body: {}",
                 status, error_body
             )));
         }
 
-        info!("[NoRisk API] Successfully reported referral code");
+        info!("[Copper API] Successfully reported referral code");
         Ok(())
     }
 
@@ -964,8 +960,8 @@ impl NoRiskApi {
         let base_url = Self::get_api_base(is_experimental);
         let url = format!("{}/launcher/referral/info", base_url);
 
-        info!("[NoRisk API] Fetching referral info for code: {}", code);
-        debug!("[NoRisk API] Full URL: {}", url);
+        info!("[Copper API] Fetching referral info for code: {}", code);
+        debug!("[Copper API] Full URL: {}", url);
 
         let response = HTTP_CLIENT
             .get(&url)
@@ -973,12 +969,12 @@ impl NoRiskApi {
             .send()
             .await
             .map_err(|e| {
-                error!("[NoRisk API] Referral info request failed: {}", e);
+                error!("[Copper API] Referral info request failed: {}", e);
                 AppError::RequestError(format!("Failed to fetch referral info: {}", e))
             })?;
 
         let status = response.status();
-        debug!("[NoRisk API] Referral info response status: {}", status);
+        debug!("[Copper API] Referral info response status: {}", status);
 
         if !status.is_success() {
             let error_body = response
@@ -986,21 +982,21 @@ impl NoRiskApi {
                 .await
                 .unwrap_or_else(|_| "Failed to read error body".to_string());
             error!(
-                "[NoRisk API] Referral info error response: Status {}, Body: {}",
+                "[Copper API] Referral info error response: Status {}, Body: {}",
                 status, error_body
             );
             return Err(AppError::RequestError(format!(
-                "NoRisk API returned error status for referral info: {}, Body: {}",
+                "Copper API returned error status for referral info: {}, Body: {}",
                 status, error_body
             )));
         }
 
         let info = response.json::<ReferralInfo>().await.map_err(|e| {
-            error!("[NoRisk API] Failed to parse referral info response: {}", e);
+            error!("[Copper API] Failed to parse referral info response: {}", e);
             AppError::ParseError(format!("Failed to parse referral info: {}", e))
         })?;
 
-        info!("[NoRisk API] Successfully fetched referral info for: {}", info.referrer_name);
+        info!("[Copper API] Successfully fetched referral info for: {}", info.referrer_name);
         Ok(info)
     }
 }

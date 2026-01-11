@@ -323,9 +323,9 @@ export interface FoundItemDetails {
 }
 
 /**
- * Details about an item when it comes from a NoRisk Pack
+ * Details about an item when it comes from a Copper Pack
  */
-export interface NoRiskPackItemDetails {
+export interface CopperPackItemDetails {
   is_enabled: boolean;
   norisk_mod_identifier?: NoriskModIdentifier;
 }
@@ -336,7 +336,7 @@ export interface ContentInstallStatus {
   is_specific_version_in_pack: boolean;
   is_enabled?: boolean;
   found_item_details?: FoundItemDetails;
-  norisk_pack_item_details?: NoRiskPackItemDetails;
+  norisk_pack_item_details?: CopperPackItemDetails;
 }
 
 /**
@@ -429,7 +429,7 @@ export interface LocalContentItem {
   curseforge_info?: GenericCurseForgeInfo | null;
   platform?: ModPlatform | null; // Platform this mod came from
   source_type?: string | null; // For identifying "custom" mods
-  norisk_info?: NoriskModIdentifier | null; // Identifier for NoRiskMods
+  norisk_info?: NoriskModIdentifier | null; // Identifier for CopperMods
   fallback_version?: string | null; // Fallback version from compatibility target
   id?: string | null; // Added optional ID field from ModProfileEntry.id
   associated_loader?: ModLoader | null; // Added associated_loader from ModProfileEntry

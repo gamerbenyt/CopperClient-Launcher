@@ -212,7 +212,7 @@
         },
         {
             "default": true,
-            "name": "NoRiskClient-Fabric-Utils",
+            "name": "CopperClient-Fabric-Utils",
             "required": true,
             "source": {
                 "artifact": "gg.norisk:noriskclient-fabric-utils:1.21.4-2.2.33",
@@ -222,7 +222,7 @@
         },
         {
             "default": true,
-            "name": "NoRiskClient-UI",
+            "name": "CopperClient-UI",
             "required": true,
             "source": {
                 "artifact": "gg.norisk:ui:1.21.4-2.2.116",
@@ -232,7 +232,7 @@
         },
         {
             "default": true,
-            "name": "NoRiskClient-Client",
+            "name": "CopperClient-Client",
             "required": true,
             "source": {
                 "artifact": "gg.norisk:client:1.21.4-2.1.12",
@@ -242,7 +242,7 @@
         },
         {
             "default": true,
-            "name": "NoRiskClient-Cosmetics",
+            "name": "CopperClient-Cosmetics",
             "required": true,
             "source": {
                 "artifact": "gg.norisk:cosmetics:1.21.4-2.2.57",
@@ -252,7 +252,7 @@
         },
         {
             "default": true,
-            "name": "NoRiskClient-Friends",
+            "name": "CopperClient-Friends",
             "required": true,
             "source": {
                 "artifact": "gg.norisk:friends:1.21.4-2.2.86",
@@ -262,7 +262,7 @@
         },
         {
             "default": true,
-            "name": "NoRiskClient-McReal",
+            "name": "CopperClient-McReal",
             "required": true,
             "source": {
                 "artifact": "gg.norisk:mcreal:1.21.4-2.0.52",
@@ -272,7 +272,7 @@
         },
         {
             "default": true,
-            "name": "NoRiskClient-Minigames",
+            "name": "CopperClient-Minigames",
             "required": true,
             "source": {
                 "artifact": "gg.norisk:minigames:1.21.4-2.1.26",

@@ -31,8 +31,6 @@ function getRewardShortLabel(reward: Reward | null, shopItemName?: string | null
       return `Random ${reward.itemType}`;
     case "Discount":
       return `${reward.percentage}% Off`;
-    case "NrcPlus":
-      return `${Math.floor(reward.duration / (1000 * 60 * 60 * 24))}d Plus`;
     case "Theme":
       return "Theme";
     default:

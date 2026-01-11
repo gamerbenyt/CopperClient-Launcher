@@ -37,7 +37,7 @@ pub enum ContentType {
     ShaderPack,
     DataPack,
     Mod,
-    NoRiskMod,
+    CopperMod,
 }
 
 impl Default for ContentType {
@@ -177,8 +177,8 @@ async fn get_content_directory(profile: &Profile, content_type: &ContentType) ->
                 .calculate_instance_path_for_profile(profile)?;
             Ok(instance_path.join("mods"))
         }
-        ContentType::NoRiskMod => {
-            // NoRiskMods don't have a physical directory but we return a path for consistency
+        ContentType::CopperMod => {
+            // CopperMods don't have a physical directory but we return a path for consistency
             let state = State::get().await?;
             let instance_path = state
                 .profile_manager
@@ -195,7 +195,7 @@ fn content_type_to_string(content_type: &ContentType) -> &'static str {
         ContentType::ShaderPack => "Shader Pack",
         ContentType::DataPack => "Data Pack",
         ContentType::Mod => "Mod",
-        ContentType::NoRiskMod => "NoRisk Mod",
+        ContentType::CopperMod => "Copper Mod",
     }
 }
 
@@ -255,9 +255,9 @@ pub struct FoundItemDetails {
     pub display_name: Option<String>, // Display name if available
 }
 
-/// Represents details about an item when it comes from a NoRisk Pack
+/// Represents details about an item when it comes from a Copper Pack
 #[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct NoRiskPackItemDetails {
+pub struct CopperPackItemDetails {
     pub is_enabled: bool,
     pub norisk_mod_identifier: Option<crate::state::profile_state::NoriskModIdentifier>,
 }
@@ -269,7 +269,7 @@ pub struct ContentInstallStatus {
     pub is_specific_version_in_pack: bool,
     pub is_enabled: Option<bool>,
     pub found_item_details: Option<FoundItemDetails>,
-    pub norisk_pack_item_details: Option<NoRiskPackItemDetails>,
+    pub norisk_pack_item_details: Option<CopperPackItemDetails>,
 }
 
 /// Checks the installation status of a specific Modrinth content item within a profile's context.
@@ -372,7 +372,7 @@ pub async fn check_content_installed(params: CheckContentParams) -> Result<Conte
                                     }
                                 }
 
-                                // New addition: Add NoRiskPackItemDetails
+                                // New addition: Add CopperPackItemDetails
                                 let mod_identifier = norisk_mod.id.clone();
 
                                 // Create a proper NoriskModIdentifier
@@ -392,7 +392,7 @@ pub async fn check_content_installed(params: CheckContentParams) -> Result<Conte
                                     .disabled_norisk_mods_detailed
                                     .contains(&norisk_mod_identifier);
 
-                                status.norisk_pack_item_details = Some(NoRiskPackItemDetails {
+                                status.norisk_pack_item_details = Some(CopperPackItemDetails {
                                     is_enabled: is_pack_mod_enabled,
                                     norisk_mod_identifier: Some(norisk_mod_identifier),
                                 });
@@ -1698,7 +1698,7 @@ async fn process_mod_requests(
         }
     };
 
-    // For each request, we need to check both in NoRisk Pack and local installation
+    // For each request, we need to check both in Copper Pack and local installation
     for (request, idx) in requests {
         // Convert to the old params format for reusing norisk pack check logic
         let old_params = CheckContentParams {
@@ -1731,7 +1731,7 @@ async fn process_mod_requests(
             }
         };
 
-        // Check if included in NoRisk Pack
+        // Check if included in Copper Pack
         if let Some(pack_id) = &profile.selected_norisk_pack_id {
             let state = State::get().await?;
             let config = state.norisk_pack_manager.get_config().await;
@@ -1765,7 +1765,7 @@ async fn process_mod_requests(
                                     }
                                 }
 
-                                // Add NoRiskPackItemDetails
+                                // Add CopperPackItemDetails
                                 let mod_identifier = norisk_mod.id.clone();
 
                                 let norisk_mod_identifier =
@@ -1783,7 +1783,7 @@ async fn process_mod_requests(
                                     .disabled_norisk_mods_detailed
                                     .contains(&norisk_mod_identifier);
 
-                                status.norisk_pack_item_details = Some(NoRiskPackItemDetails {
+                                status.norisk_pack_item_details = Some(CopperPackItemDetails {
                                     is_enabled: is_pack_mod_enabled,
                                     norisk_mod_identifier: Some(norisk_mod_identifier),
                                 });
@@ -1943,7 +1943,7 @@ async fn process_resourcepack_requests(
         // Initialize the status struct
         let mut status = ContentInstallStatus::default();
 
-        // Check NoRisk Pack - reuse old function for now
+        // Check Copper Pack - reuse old function for now
         let old_params = CheckContentParams {
             profile_id: profile.id,
             project_id: request.project_id.clone(),
@@ -1956,14 +1956,14 @@ async fn process_resourcepack_requests(
             pack_version_number: request.pack_version_number.clone(),
         };
 
-        // Check if in NoRisk Pack
+        // Check if in Copper Pack
         if let Some(pack_id) = &profile.selected_norisk_pack_id {
             let state = State::get().await?;
             let config = state.norisk_pack_manager.get_config().await;
 
             if let Ok(resolved_pack) = config.get_resolved_pack_definition(pack_id) {
                 // Check if the pack includes this resource pack
-                // (Note: This would need to be expanded if NoRisk Packs can contain resource packs)
+                // (Note: This would need to be expanded if Copper Packs can contain resource packs)
                 // For now, this is a placeholder as the original function doesn't handle this case specifically
             }
         }
@@ -2048,7 +2048,7 @@ async fn process_shaderpack_requests(
         // Initialize the status struct
         let mut status = ContentInstallStatus::default();
 
-        // Check if in NoRisk Pack - placeholder for future NoRisk Pack shader support
+        // Check if in Copper Pack - placeholder for future Copper Pack shader support
         if let Some(pack_id) = &profile.selected_norisk_pack_id {
             // Placeholder for future implementation
         }
@@ -2130,7 +2130,7 @@ async fn process_datapack_requests(
         // Initialize the status struct
         let mut status = ContentInstallStatus::default();
 
-        // Check if in NoRisk Pack - placeholder for future NoRisk Pack datapack support
+        // Check if in Copper Pack - placeholder for future Copper Pack datapack support
         if let Some(pack_id) = &profile.selected_norisk_pack_id {
             // Placeholder for future implementation
         }
@@ -2226,7 +2226,7 @@ pub struct LocalContentItem {
     pub curseforge_info: Option<GenericCurseForgeInfo>,
     pub platform: Option<crate::integrations::unified_mod::ModPlatform>, // Platform this mod came from
     pub source_type: Option<String>, // Zur Kennzeichnung von Custom Mods
-    pub norisk_info: Option<crate::state::profile_state::NoriskModIdentifier>, // Identifier für NoRiskMods
+    pub norisk_info: Option<crate::state::profile_state::NoriskModIdentifier>, // Identifier für CopperMods
     pub fallback_version: Option<String>, // Fallback Version aus dem compatibility target
     pub id: Option<String>,               // Added optional ID field
     pub associated_loader: Option<crate::state::profile_state::ModLoader>, // Added associated_loader
@@ -2279,18 +2279,18 @@ impl LocalContentLoader {
                     instance_path.join("custom_mods"),
                 ]
             }
-            ContentType::NoRiskMod => {
-                // For NoRisk mods, handled differently (no physical directory scan)
+            ContentType::CopperMod => {
+                // For Copper mods, handled differently (no physical directory scan)
                 Vec::new()
             }
         };
 
         let mut preliminary_items: Vec<LocalContentItem> = Vec::new();
 
-        if params.content_type == ContentType::NoRiskMod {
-            // Special handling for NoRisk mods - fetch them from the NoRisk pack system
+        if params.content_type == ContentType::CopperMod {
+            // Special handling for Copper mods - fetch them from the Copper pack system
             if let Some(pack_id) = &profile.selected_norisk_pack_id {
-                // Get the NoRisk pack manager from the state
+                // Get the Copper pack manager from the state
                 let state = State::get().await?;
                 let config = state.norisk_pack_manager.get_config().await;
 
@@ -2364,7 +2364,7 @@ impl LocalContentLoader {
                                 Ok(path) => path.to_string_lossy().to_string(),
                                 Err(e) => {
                                     warn!(
-                                        "Could not get cache path for NoRisk mod {}: {}",
+                                        "Could not get cache path for Copper mod {}: {}",
                                         norisk_mod.id, e
                                     );
                                     String::new() // Fallback if path can't be determined
@@ -2379,7 +2379,7 @@ impl LocalContentLoader {
                                 file_size: 0,
                                 is_disabled,
                                 is_directory: false,
-                                content_type: ContentType::NoRiskMod,
+                                content_type: ContentType::CopperMod,
                                 modrinth_info,
                                 curseforge_info: None,
                                 platform: None,
@@ -2388,13 +2388,13 @@ impl LocalContentLoader {
                                 fallback_version: fallback_version,
                                 id: None,
                                 associated_loader: None,
-                                modpack_origin: None, // NoRisk mods kommen nicht aus ModPacks
+                                modpack_origin: None, // Copper mods kommen nicht aus ModPacks
                                 updates_enabled: None, // Default behavior
                             });
                         }
                     }
                     Err(e) => {
-                        warn!("Failed to get NoRisk pack definition: {}", e);
+                        warn!("Failed to get Copper pack definition: {}", e);
                     }
                 }
             }
@@ -2604,7 +2604,7 @@ impl LocalContentLoader {
                             || file_name_str.ends_with(".jar.disabled"))
                             && !is_directory
                     }
-                    ContentType::NoRiskMod => false, // We handle NoRisk mods differently, not by scanning directories
+                    ContentType::CopperMod => false, // We handle Copper mods differently, not by scanning directories
                 };
 
                 if is_valid_item {
@@ -2675,8 +2675,8 @@ impl LocalContentLoader {
 
         let mut final_items = preliminary_items;
 
-        // If the content type is NoRiskMod, sort the items by filename for consistent ordering
-        if params.content_type == ContentType::NoRiskMod {
+        // If the content type is CopperMod, sort the items by filename for consistent ordering
+        if params.content_type == ContentType::CopperMod {
             final_items.sort_by(|a, b| a.filename.cmp(&b.filename));
         }
 

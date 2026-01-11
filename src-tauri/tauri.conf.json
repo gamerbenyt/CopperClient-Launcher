@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "NoRisk Launcher",
+  "productName": "Copper Launcher",
   "version": "0.6.16",
-  "identifier": "gg.norisk.NoRiskClientLauncherV3",
+  "identifier": "gg.norisk.CopperClientLauncherV3",
   "build": {
     "beforeDevCommand": "yarn dev",
     "devUrl": "http://localhost:1420",
@@ -26,7 +26,7 @@
       {
         "fullscreen": false,
         "resizable": true,
-        "title": "NoRiskClient",
+        "title": "CopperClient",
         "width": 1280,
         "height": 800,
         "minWidth": 1080,
@@ -161,7 +161,7 @@
           "noriskpack"
         ],
         "name": "NoriskPack File",
-        "description": "NoRiskClient Modpack File"
+        "description": "CopperClient Modpack File"
       }
     ]
   }

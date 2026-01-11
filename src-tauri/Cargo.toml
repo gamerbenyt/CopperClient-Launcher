@@ -2,7 +2,7 @@
 name = "noriskclient-launcher-v3"
 version = "0.0.1"
 description = "A Tauri App"
-authors = ["NoRiskk"]
+authors = ["Copperk"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

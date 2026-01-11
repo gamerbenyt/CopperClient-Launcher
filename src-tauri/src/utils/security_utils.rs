@@ -11,7 +11,7 @@ use regex::Regex;
 /// A string with sensitive information masked with asterisks
 pub fn mask_sensitive_data(content: &str) -> String {
     lazy_static! {
-        // Mask NoRisk client tokens
+        // Mask Copper client tokens
         static ref NORISK_TOKEN_REGEX: Regex = Regex::new(r"-Dnorisk\.token=[^\s]+").unwrap();
         // Mask Minecraft access tokens
         static ref ACCESS_TOKEN_REGEX: Regex = Regex::new(r"--accessToken\s+[^\s]+").unwrap();

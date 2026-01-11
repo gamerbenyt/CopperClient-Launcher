@@ -30,7 +30,7 @@ function StandardVersionTooltipContent() {
       {/* Main explanation */}
       <div className="text-left">
         <div className="text-sm leading-relaxed text-white">
-          This version is provided and updated by NRC.
+          This version is provided and updated by CC.
         </div>
       </div>
 

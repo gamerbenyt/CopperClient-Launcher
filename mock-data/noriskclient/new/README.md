@@ -1,4 +1,4 @@
-# NoRiskClient StartUpHelper
+# CopperClient StartUpHelper
 
 Dieser Ordner enthält Dateien, die automatisch in neue Profile kopiert werden können.
 
@@ -24,10 +24,10 @@ noriskclient/
 ├── new/                    # StartUpHelper Quellordner
 │   ├── options.txt        # Beispiel: Standard-Optionen
 │   ├── config/
-│   │   └── hi.json       # Beispiel: NoRiskClient Konfiguration
+│   │   └── hi.json       # Beispiel: CopperClient Konfiguration
 │   └── mods/
 │       └── example.jar   # Beispiel: Standard-Mods
-└── [andere NoRiskClient Dateien...]
+└── [andere CopperClient Dateien...]
 ```
 
 ## Verwendung
@@ -53,8 +53,8 @@ Um StartUpHelper zu aktivieren, füge in einem Profil folgende Konfiguration hin
 - **Ziel**: `{profile_dir}/{relative_path}`
 
 Beispiel:
-- Quelle: `~/Library/Application Support/gg/norisk/NoRiskClientV3/profiles/noriskclient/new/options.txt`
-- Ziel: `~/Library/Application Support/gg/norisk/NoRiskClientV3/profiles/{profile-id}/options.txt`
+- Quelle: `~/Library/Application Support/gg/norisk/CopperClientV3/profiles/noriskclient/new/options.txt`
+- Ziel: `~/Library/Application Support/gg/norisk/CopperClientV3/profiles/{profile-id}/options.txt`
 
 ## Unterstützte Dateitypen
 

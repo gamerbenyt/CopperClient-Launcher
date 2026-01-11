@@ -1,6 +1,6 @@
 ## Issues
 
-If you notice any bugs or missing features, you can let us know by opening an issue [here](https://github.com/NoRiskClient/issues/issues/new/choose).
+If you notice any bugs or missing features, you can let us know by opening an issue [here](https://github.com/CopperClient/issues/issues/new/choose).
 
 ## License
 This code is originally forked and still uses a small amount of code from [LiquidLauncher](https://github.com/CCBlueX/LiquidLauncher).
@@ -23,7 +23,7 @@ Do the above and share your source code with everyone; just like we do.
 ### Setup Instructions
 1. Clone the repository:
    ```bash
-   git clone --recurse-submodules https://github.com/NoRiskClient/noriskclient-launcher
+   git clone --recurse-submodules https://github.com/CopperClient/copperclient-launcher
    cd noriskclient-launcher
    ```
 
@@ -43,4 +43,4 @@ Do the above and share your source code with everyone; just like we do.
    ```
 
 ## Contributing
-We appreciate contributions. So if you want to support us, feel free to make changes to NoRisk source code and submit a pull request.
+We appreciate contributions. So if you want to support us, feel free to make changes to Copper source code and submit a pull request.

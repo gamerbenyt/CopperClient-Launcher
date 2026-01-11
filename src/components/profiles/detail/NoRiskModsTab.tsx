@@ -25,7 +25,7 @@ import { Label } from "../../ui/Label";
 import { gsap } from "gsap";
 import { ErrorMessage } from "../../ui/ErrorMessage";
 
-interface NoRiskMod {
+interface CopperMod {
   id: string;
   display_name: string;
   description?: string;
@@ -35,20 +35,20 @@ interface NoRiskMod {
   path?: string;
 }
 
-interface NoRiskModsTabProps {
+interface CopperModsTabProps {
   profile: Profile;
   onRefresh?: () => void;
   isActive?: boolean;
   searchQuery?: string;
 }
 
-export function NoRiskModsTab({
+export function CopperModsTab({
   profile,
   onRefresh,
   isActive = false,
   searchQuery = "",
-}: NoRiskModsTabProps) {
-  const [noriskMods, setNoriskMods] = useState<NoRiskMod[]>([]);
+}: CopperModsTabProps) {
+  const [noriskMods, setNoriskMods] = useState<CopperMod[]>([]);
   const [selectedMods, setSelectedMods] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
   const [localSearchQuery, setLocalSearchQuery] = useState("");
@@ -157,7 +157,7 @@ export function NoRiskModsTab({
       }
     } catch (error) {
       setError(
-        `Failed to load NoRisk packs: ${error instanceof Error ? error.message : String(error)}`,
+        `Failed to load Copper packs: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   };
@@ -196,7 +196,7 @@ export function NoRiskModsTab({
           noriskPacksConfig?.packs[profile.selected_norisk_pack_id];
         if (!packDef) {
           setError(
-            `NoRisk pack "${profile.selected_norisk_pack_id}" not found. Try refreshing the packs.`,
+            `Copper pack "${profile.selected_norisk_pack_id}" not found. Try refreshing the packs.`,
           );
           setIsLoading(false);
           return;
@@ -222,13 +222,13 @@ export function NoRiskModsTab({
               processFetchedMods(lastResortResult.mods);
             } else {
               setError(
-                "Could not load NoRisk mods. No mods found in pack definition.",
+                "Could not load Copper mods. No mods found in pack definition.",
               );
               setNoriskMods([]);
             }
           } catch (lastResortError) {
             setError(
-              `Failed to load NoRisk mods: ${
+              `Failed to load Copper mods: ${
                 lastResortError instanceof Error
                   ? lastResortError.message
                   : String(lastResortError)
@@ -242,7 +242,7 @@ export function NoRiskModsTab({
       }
     } catch (error) {
       setError(
-        `Failed to load NoRisk mods: ${error instanceof Error ? error.message : String(error)}`,
+        `Failed to load Copper mods: ${error instanceof Error ? error.message : String(error)}`,
       );
     } finally {
       setIsLoading(false);
@@ -397,7 +397,7 @@ export function NoRiskModsTab({
       if (onRefresh) onRefresh();
     } catch (error) {
       setError(
-        `Failed to refresh NoRisk packs: ${error instanceof Error ? error.message : String(error)}`,
+        `Failed to refresh Copper packs: ${error instanceof Error ? error.message : String(error)}`,
       );
     } finally {
       setRefreshing(false);
@@ -563,7 +563,7 @@ export function NoRiskModsTab({
           >
             {sortedMods.length > 0 ? (
               sortedMods.map((mod) => (
-                <NoRiskModRow
+                <CopperModRow
                   key={mod.id}
                   mod={mod}
                   isSelected={selectedMods.has(mod.id)}
@@ -580,7 +580,7 @@ export function NoRiskModsTab({
                     ? "no mods match your search"
                     : "no norisk mods available"
                 }
-                description="NoRisk mods are automatically managed by the launcher"
+                description="Copper mods are automatically managed by the launcher"
               />
             )}
           </ContentTable>
@@ -590,21 +590,21 @@ export function NoRiskModsTab({
   );
 }
 
-interface NoRiskModRowProps {
-  mod: NoRiskMod;
+interface CopperModRowProps {
+  mod: CopperMod;
   isSelected: boolean;
   onSelect: () => void;
   onToggle: () => void;
   localIcon?: string | null;
 }
 
-function NoRiskModRow({
+function CopperModRow({
   mod,
   isSelected,
   onSelect,
   onToggle,
   localIcon,
-}: NoRiskModRowProps) {
+}: CopperModRowProps) {
   const [isHovered, setIsHovered] = useState(false);
   const accentColor = useThemeStore((state) => state.accentColor);
   const rowRef = useRef<HTMLDivElement>(null);

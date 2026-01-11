@@ -477,7 +477,7 @@ function HeaderBar({ minimizeRef, maximizeRef, closeRef }: HeaderBarProps) {
               className="font-minecraft text-4xl tracking-wider font-bold lowercase text-shadow"
               data-tauri-drag-region
             >
-              noriskclient
+              copperclient
             </h1>
             {availableUpdate && (
               <Tooltip content={`Click to update: ${availableUpdate.version}`}>

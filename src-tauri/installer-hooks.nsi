@@ -1,10 +1,10 @@
-; NoRisk Launcher - NSIS Installer Hooks
+; Copper Launcher - NSIS Installer Hooks
 ; Extracts referral code from installer filename for tracking
 ; Works for affiliate links, friend referrals, etc.
 ;
-; Expected filename format: NoRiskClient-Windows-setup-REFERRALCODE.exe
-; Example: NoRiskClient-Windows-setup-550e8400-e29b-41d4.exe
-;          NoRiskClient-Windows-setup-nqrman.exe
+; Expected filename format: CopperClient-Windows-setup-REFERRALCODE.exe
+; Example: CopperClient-Windows-setup-550e8400-e29b-41d4.exe
+;          CopperClient-Windows-setup-nqrman.exe
 
 !include "WordFunc.nsh"
 
@@ -22,7 +22,7 @@
   DetailPrint "Installer filename: $0"
 
   ; Use WordFind2X to extract text BETWEEN "-setup-" and ".exe"
-  ; This reliably extracts the UUID from: NoRiskClient-Windows-setup-UUID.exe
+  ; This reliably extracts the UUID from: CopperClient-Windows-setup-UUID.exe
   ; +1 = first occurrence
   ${WordFind2X} $0 "-setup-" ".exe" "+1" $1
 

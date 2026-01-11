@@ -18,19 +18,19 @@ jobs:
           - platform: 'macos-latest'
             target: aarch64-apple-darwin
             output_path: ./src-tauri/target/aarch64-apple-darwin/release/bundle
-            asset_name_base: NoRiskClient-MacOS-arm64
+            asset_name_base: CopperClient-MacOS-arm64
           - platform: 'macos-latest'
             target: x86_64-apple-darwin
             output_path: ./src-tauri/target/x86_64-apple-darwin/release/bundle
-            asset_name_base: NoRiskClient-MacOS-x86_64
+            asset_name_base: CopperClient-MacOS-x86_64
           - platform: 'ubuntu-22.04'
             target: '' # Kein explizites Target für Linux x86_64
             output_path: ./src-tauri/target/release/bundle
-            asset_name_base: NoRiskClient-Linux
+            asset_name_base: CopperClient-Linux
           - platform: 'windows-latest'
             target: '' # Kein explizites Target für Windows x86_64
             output_path: ./src-tauri/target/release/bundle
-            asset_name_base: NoRiskClient-Windows-setup
+            asset_name_base: CopperClient-Windows-setup
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -87,7 +87,7 @@ jobs:
           ls -R "${{ matrix.output_path }}" || true
           echo "-----------------------------------"
           
-          APP_BASE_NAME="NoRisk Launcher" # Dein productName
+          APP_BASE_NAME="Copper Launcher" # Dein productName
           APPIMAGE_DIR=${{ matrix.output_path }}/appimage
           DEB_DIR=${{ matrix.output_path }}/deb
           
@@ -153,7 +153,7 @@ jobs:
           ls -R "${{ matrix.output_path }}" || true 
           echo "-----------------------------------"
           
-          APP_BASE_NAME="NoRisk Launcher" # Dein productName
+          APP_BASE_NAME="Copper Launcher" # Dein productName
           ARTIFACT_DIR_DMG=${{ matrix.output_path }}/dmg
           ARTIFACT_DIR_APP=${{ matrix.output_path }}/macos
           RENAMED_DIR="$ARTIFACT_DIR_APP/renamed"

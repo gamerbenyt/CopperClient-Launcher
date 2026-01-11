@@ -1918,7 +1918,7 @@ pub async fn download_and_install_curseforge_modpack(
         .header(
             "User-Agent",
             format!(
-                "NoRiskClient-Launcher/{} (support@norisk.gg)",
+                "CopperClient-Launcher/{} (support@norisk.gg)",
                 env!("CARGO_PKG_VERSION")
             ),
         )

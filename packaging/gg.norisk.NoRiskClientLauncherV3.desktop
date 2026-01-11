@@ -1,6 +1,6 @@
 [Desktop Entry]
-Name=NoRisk Client Launcher
-Exec=noriskclient-launcher-v3
+Name=Copper Client Launcher
+Exec=copperclient-launcher-v3
 Type=Application
-Icon=gg.norisk.NoRiskClientLauncherV3
+Icon=gg.norisk.CopperClientLauncherV3
 Categories=Game;

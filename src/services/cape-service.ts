@@ -37,7 +37,7 @@ export const getPlayerCapes = (
  * Equip a specific cape for a player
  * 
  * @param capeHash Hash of the cape to equip
- * @param noriskToken Optional NoRisk token
+ * @param noriskToken Optional Copper token
  * @param playerUuid Optional UUID of the player (defaults to active account)
  * @returns A promise that resolves when the cape is equipped
  */
@@ -57,7 +57,7 @@ export const equipCape = (
  * Delete a specific cape owned by the player
  * 
  * @param capeHash Hash of the cape to delete
- * @param noriskToken Optional NoRisk token
+ * @param noriskToken Optional Copper token
  * @param playerUuid Optional UUID of the player (defaults to active account)
  * @returns A promise that resolves when the cape is deleted
  */
@@ -89,7 +89,7 @@ export interface CapeUploadResponse {
  * Upload a new cape image for the active player
  *
  * @param imagePath Path to the cape image file (PNG)
- * @param noriskToken Optional NoRisk token
+ * @param noriskToken Optional Copper token
  * @param playerUuid Optional UUID of the player (defaults to active account)
  * @returns A promise that resolves to the cape upload response with hash and resize info
  */
@@ -108,7 +108,7 @@ export const uploadCape = (
 /**
  * Unequip the currently equipped cape for the active player
  * 
- * @param noriskToken Optional NoRisk token
+ * @param noriskToken Optional Copper token
  * @param playerUuid Optional UUID of the player (defaults to active account)
  * @returns A promise that resolves when the cape is unequipped
  */

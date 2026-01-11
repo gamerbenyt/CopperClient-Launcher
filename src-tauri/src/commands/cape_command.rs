@@ -46,10 +46,10 @@ pub async fn browse_capes(
         .await?
         .ok_or_else(|| CommandError::from(AppError::NoCredentialsError))?;
 
-    // Get the NoRisk token: prioritize passed token, otherwise get from active account
+    // Get the Copper token: prioritize passed token, otherwise get from active account
     let token_to_use = match payload.norisk_token {
         Some(token) => {
-            debug!("Using provided NoRisk token.");
+            debug!("Using provided Copper token.");
             token
         }
         None => {
@@ -132,7 +132,7 @@ pub struct GetPlayerCapesPayload {
 /// Parameters:
 /// - player_identifier: UUID or username of the player
 /// - request_uuid: UUID for tracking the request (optional)
-/// - norisk_token: Optional NoRisk token
+/// - norisk_token: Optional Copper token
 #[tauri::command]
 pub async fn get_player_capes(
     payload: GetPlayerCapesPayload,
@@ -202,7 +202,7 @@ pub async fn get_player_capes(
         None => {
             debug!("[CMD get_player_capes] No norisk_token in payload, attempting to use token from active account.");
             let acc = active_account_opt.as_ref().ok_or_else(|| {
-                error!("[CMD get_player_capes] NoRisk token required (neither in payload nor from active account).");
+                error!("[CMD get_player_capes] Copper token required (neither in payload nor from active account).");
                 CommandError::from(AppError::NoCredentialsError)
             })?;
             acc.norisk_credentials.get_token_for_mode(is_experimental)?
@@ -264,7 +264,7 @@ pub async fn get_player_capes(
 ///
 /// Parameters:
 /// - cape_hash: Hash of the cape to equip
-/// - norisk_token: Optional NoRisk token
+/// - norisk_token: Optional Copper token
 /// - player_uuid: Optional UUID of the player (defaults to active account)
 #[tauri::command]
 pub async fn equip_cape(
@@ -291,10 +291,10 @@ pub async fn equip_cape(
         .await?
         .ok_or_else(|| CommandError::from(AppError::NoCredentialsError))?;
 
-    // Get the NoRisk token: prioritize passed token, otherwise get from active account
+    // Get the Copper token: prioritize passed token, otherwise get from active account
     let token_to_use = match norisk_token {
         Some(token) => {
-            debug!("Using provided NoRisk token.");
+            debug!("Using provided Copper token.");
             token
         }
         None => {
@@ -343,7 +343,7 @@ pub async fn equip_cape(
 ///
 /// Parameters:
 /// - cape_hash: Hash of the cape to favorite
-/// - norisk_token: Optional NoRisk token
+/// - norisk_token: Optional Copper token
 #[tauri::command]
 pub async fn add_favorite_cape(
     cape_hash: String,
@@ -366,7 +366,7 @@ pub async fn add_favorite_cape(
 
     let token_to_use = match norisk_token {
         Some(token) => {
-            debug!("Using provided NoRisk token.");
+            debug!("Using provided Copper token.");
             token
         }
         None => {
@@ -411,7 +411,7 @@ pub async fn get_capes_by_hashes(
 
     let token_to_use = match norisk_token {
         Some(token) => {
-            debug!("Using provided NoRisk token.");
+            debug!("Using provided Copper token.");
             token
         }
         None => {
@@ -437,7 +437,7 @@ pub async fn get_capes_by_hashes(
 ///
 /// Parameters:
 /// - cape_hash: Hash of the cape to remove from favorites
-/// - norisk_token: Optional NoRisk token
+/// - norisk_token: Optional Copper token
 #[tauri::command]
 pub async fn remove_favorite_cape(
     cape_hash: String,
@@ -460,7 +460,7 @@ pub async fn remove_favorite_cape(
 
     let token_to_use = match norisk_token {
         Some(token) => {
-            debug!("Using provided NoRisk token.");
+            debug!("Using provided Copper token.");
             token
         }
         None => {
@@ -486,7 +486,7 @@ pub async fn remove_favorite_cape(
 ///
 /// Parameters:
 /// - cape_hash: Hash of the cape to delete
-/// - norisk_token: Optional NoRisk token
+/// - norisk_token: Optional Copper token
 /// - player_uuid: Optional UUID of the player (defaults to active account)
 #[tauri::command]
 pub async fn delete_cape(
@@ -513,10 +513,10 @@ pub async fn delete_cape(
         .await?
         .ok_or_else(|| CommandError::from(AppError::NoCredentialsError))?;
 
-    // Get the NoRisk token: prioritize passed token, otherwise get from active account
+    // Get the Copper token: prioritize passed token, otherwise get from active account
     let token_to_use = match norisk_token {
         Some(token) => {
-            debug!("Using provided NoRisk token.");
+            debug!("Using provided Copper token.");
             token
         }
         None => {
@@ -565,7 +565,7 @@ pub async fn delete_cape(
 ///
 /// Parameters:
 /// - image_path: Path to the cape image file (PNG)
-/// - norisk_token: Optional NoRisk token
+/// - norisk_token: Optional Copper token
 /// - player_uuid: Optional UUID of the player (defaults to active account)
 #[tauri::command]
 pub async fn upload_cape(
@@ -592,10 +592,10 @@ pub async fn upload_cape(
         .await?
         .ok_or_else(|| CommandError::from(AppError::NoCredentialsError))?;
 
-    // Get the NoRisk token: prioritize passed token, otherwise get from active account
+    // Get the Copper token: prioritize passed token, otherwise get from active account
     let token_to_use = match norisk_token {
         Some(token) => {
-            debug!("Using provided NoRisk token.");
+            debug!("Using provided Copper token.");
             token
         }
         None => {
@@ -647,7 +647,7 @@ pub async fn upload_cape(
 /// Unequip the currently equipped cape for the active player
 ///
 /// Parameters:
-/// - norisk_token: Optional NoRisk token
+/// - norisk_token: Optional Copper token
 /// - player_uuid: Optional UUID of the player (defaults to active account)
 #[tauri::command]
 pub async fn unequip_cape(
@@ -673,10 +673,10 @@ pub async fn unequip_cape(
         .await?
         .ok_or_else(|| CommandError::from(AppError::NoCredentialsError))?;
 
-    // Get the NoRisk token: prioritize passed token, otherwise get from active account
+    // Get the Copper token: prioritize passed token, otherwise get from active account
     let token_to_use = match norisk_token {
         Some(token) => {
-            debug!("Using provided NoRisk token.");
+            debug!("Using provided Copper token.");
             token
         }
         None => {

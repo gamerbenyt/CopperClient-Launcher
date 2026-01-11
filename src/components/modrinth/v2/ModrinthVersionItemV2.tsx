@@ -286,7 +286,7 @@ export const ModrinthVersionItemV2 = React.memo<ModrinthVersionItemV2Props>(
             <div className="flex justify-between items-baseline gap-2">
               <div className="flex-shrink min-w-0 flex items-center gap-2">
                 {noRiskStatus === 'blocked' && (
-                  <Tooltip content="This mod is blocked by NoRisk Client as it is known to cause crashes or severe compatibility issues. Installation is not recommended.">
+                  <Tooltip content="This mod is blocked by Copper Client as it is known to cause crashes or severe compatibility issues. Installation is not recommended.">
                     <Icon 
                       icon="solar:danger-triangle-bold" 
                       className="w-4 h-4 text-red-500 flex-shrink-0"
@@ -294,7 +294,7 @@ export const ModrinthVersionItemV2 = React.memo<ModrinthVersionItemV2Props>(
                   </Tooltip>
                 )}
                 {noRiskStatus === 'warning' && (
-                  <Tooltip content="This version is known to cause crashes or compatibility issues with NoRisk Client. Installation is possible but not recommended.">
+                  <Tooltip content="This version is known to cause crashes or compatibility issues with Copper Client. Installation is possible but not recommended.">
                     <Icon 
                       icon="solar:danger-triangle-bold" 
                       className="w-4 h-4 text-yellow-500 flex-shrink-0"
@@ -303,7 +303,7 @@ export const ModrinthVersionItemV2 = React.memo<ModrinthVersionItemV2Props>(
                 )}
                 {/* Fallback for deprecated isBlocked prop */}
                 {!noRiskStatus && isBlocked && (
-                  <Tooltip content="This mod is blocked by NoRisk Client as it is known to cause crashes or severe compatibility issues. Installation is not recommended.">
+                  <Tooltip content="This mod is blocked by Copper Client as it is known to cause crashes or severe compatibility issues. Installation is not recommended.">
                     <Icon 
                       icon="solar:danger-triangle-bold" 
                       className="w-4 h-4 text-red-500 flex-shrink-0"
@@ -372,7 +372,7 @@ export const ModrinthVersionItemV2 = React.memo<ModrinthVersionItemV2Props>(
                         icon="solar:bolt-circle-bold"
                         className="w-3 h-3 mr-0.5"
                       />
-                      In NoRisk Pack
+                      In Copper Pack
                     </TagBadge>
                   )}
                 <TagBadge className="flex-shrink-0">

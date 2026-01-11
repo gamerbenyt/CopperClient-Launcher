@@ -147,7 +147,7 @@ async fn uninstall_content_by_sha1_internal(
                         profile_utils::ContentType::ShaderPack => dirs_to_scan.into_iter().filter(|(name, _)| name == &"shaderpacks").collect(),
                         profile_utils::ContentType::ResourcePack => dirs_to_scan.into_iter().filter(|(name, _)| name == &"resourcepacks").collect(),
                         profile_utils::ContentType::DataPack => dirs_to_scan.into_iter().filter(|(name, _)| name == &"datapacks").collect(),
-                        _ => dirs_to_scan, // NoRiskMod or others: scan all
+                        _ => dirs_to_scan, // CopperMod or others: scan all
                     };
                 }
 
@@ -302,10 +302,10 @@ pub async fn toggle_content_from_profile(
         )))
     })?;
 
-    // Handle NoRisk Pack item toggling if the identifier is provided
+    // Handle Copper Pack item toggling if the identifier is provided
     if let Some(norisk_mod_identifier) = payload.norisk_mod_identifier {
         log::info!(
-            "Toggling NoRisk Pack item state: profile={}, pack={}, mod={}, disabled={}",
+            "Toggling Copper Pack item state: profile={}, pack={}, mod={}, disabled={}",
             payload.profile_id,
             norisk_mod_identifier.pack_id,
             norisk_mod_identifier.mod_id,
@@ -331,7 +331,7 @@ pub async fn toggle_content_from_profile(
         {
             Ok(_) => {
                 log::info!(
-                    "Successfully toggled NoRisk Pack item state for pack_id={}, mod_id={} to enabled={}",
+                    "Successfully toggled Copper Pack item state for pack_id={}, mod_id={} to enabled={}",
                     pack_id,
                     mod_id,
                     payload.enabled
@@ -339,19 +339,19 @@ pub async fn toggle_content_from_profile(
                 return Ok(());
             }
             Err(e) => {
-                log::error!("Failed to toggle NoRisk Pack item state: {}", e);
+                log::error!("Failed to toggle Copper Pack item state: {}", e);
                 return Err(CommandError::from(e));
             }
         }
     }
 
-    // Continue with SHA1-based content toggling if not a NoRisk Pack item
+    // Continue with SHA1-based content toggling if not a Copper Pack item
     let current_sha1_hash = match payload.sha1_hash {
         Some(ref hash) => hash.clone(),
         None => {
-            log::warn!("SHA1 hash is required for the current toggle implementation when not toggling a NoRisk Pack item.");
+            log::warn!("SHA1 hash is required for the current toggle implementation when not toggling a Copper Pack item.");
             return Err(CommandError::from(AppError::Other(
-                "SHA1 hash is required for this toggle operation when not toggling a NoRisk Pack item.".to_string(),
+                "SHA1 hash is required for this toggle operation when not toggling a Copper Pack item.".to_string(),
             )));
         }
     };
@@ -558,13 +558,13 @@ pub async fn toggle_content_from_profile(
                 }
             }
         }
-        Some(profile_utils::ContentType::NoRiskMod) => {
+        Some(profile_utils::ContentType::CopperMod) => {
             log::debug!(
-                "Targeted toggle for NoRiskMod with SHA1: {}",
+                "Targeted toggle for CopperMod with SHA1: {}",
                 current_sha1_hash
             );
-            // NoRiskMods are handled differently, not by scanning directories
-            // We don't need to scan any asset types for NoRiskMods
+            // CopperMods are handled differently, not by scanning directories
+            // We don't need to scan any asset types for CopperMods
             // We'll handle this in the future if needed
         }
         None => {
@@ -772,10 +772,10 @@ pub async fn install_content_to_profile(
                 }
             }
         }
-        profile_utils::ContentType::NoRiskMod => {
-            log::info!("NoRiskMod installation is not supported via this unified command");
+        profile_utils::ContentType::CopperMod => {
+            log::info!("CopperMod installation is not supported via this unified command");
             Err(CommandError::from(AppError::Other(
-                "NoRiskMod installation not supported via this command".to_string(),
+                "CopperMod installation not supported via this command".to_string(),
             )))
         }
         profile_utils::ContentType::ResourcePack => {
@@ -1048,13 +1048,13 @@ pub async fn install_local_content_to_profile(
                 ))));
             }
         }
-        profile_utils::ContentType::NoRiskMod => {
+        profile_utils::ContentType::CopperMod => {
             log::error!(
-                "ContentType::NoRiskMod is not supported for local installation via this command. Profile: {}",
+                "ContentType::CopperMod is not supported for local installation via this command. Profile: {}",
                 payload.profile_id
             );
             return Err(CommandError::from(AppError::Other(
-                "Local installation of NoRiskMod content type is not supported.".to_string(),
+                "Local installation of CopperMod content type is not supported.".to_string(),
             )));
         }
         // Handle any other ContentType variants not explicitly covered, if any exist or are added later.
@@ -1267,10 +1267,10 @@ pub async fn switch_content_version(
                 .await
                 .map_err(CommandError::from)
         }
-        profile_utils::ContentType::NoRiskMod => {
-            log::error!("Switching version for NoRiskMod is not supported via this command.");
+        profile_utils::ContentType::CopperMod => {
+            log::error!("Switching version for CopperMod is not supported via this command.");
             Err(CommandError::from(AppError::InvalidOperation(
-                "NoRiskMod versions are managed by pack configuration.".to_string(),
+                "CopperMod versions are managed by pack configuration.".to_string(),
             )))
         }
     }

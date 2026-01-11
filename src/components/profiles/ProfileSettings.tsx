@@ -183,7 +183,7 @@ export function ProfileSettings({ profile, onClose }: ProfileSettingsProps) {
     { id: "installation", label: "Installation", icon: "solar:download-bold" },
     { id: "java", label: "JAVA & Memory", icon: "solar:code-bold" },
     { id: "window", label: "Window", icon: "solar:widget-bold" },
-    { id: "nrc", label: "NRC", icon: "solar:gamepad-bold" },
+    { id: "nrc", label: "CC", icon: "solar:gamepad-bold" },
     { id: "symlinks", label: "Symlinks", icon: "solar:link-bold" },
   ];
 
@@ -333,6 +333,7 @@ export function ProfileSettings({ profile, onClose }: ProfileSettingsProps) {
           ref={sidebarRef}
           className="w-64 flex flex-col"
         >
+          
           <div className="space-y-0 flex-1">
             {tabConfig.map((tab) => {
               const isActive = activeTab === tab.id;

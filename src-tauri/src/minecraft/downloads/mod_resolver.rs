@@ -23,7 +23,7 @@ pub struct TargetMod {
 // --- Helper function to check if a filename is blocked by Flagsmith config ---
 async fn is_filename_blocked_by_config(filename: &str, enable_flagsmith_blocking: bool) -> bool {
     if !enable_flagsmith_blocking {
-        return false; // Skip blocking if no NoRisk pack is selected
+        return false; // Skip blocking if no Copper pack is selected
     }
     
     match crate::commands::flagsmith_commands::is_filename_blocked(filename.to_string()).await {
@@ -43,7 +43,7 @@ async fn is_filename_blocked_by_config(filename: &str, enable_flagsmith_blocking
 // --- Helper function to check if a Modrinth project ID is blocked by Flagsmith config ---
 async fn is_modrinth_project_id_blocked_by_config(project_id: &str, enable_flagsmith_blocking: bool) -> bool {
     if !enable_flagsmith_blocking {
-        return false; // Skip blocking if no NoRisk pack is selected
+        return false; // Skip blocking if no Copper pack is selected
     }
     
     match crate::commands::flagsmith_commands::is_modrinth_project_id_blocked(project_id.to_string()).await {
@@ -138,13 +138,13 @@ pub async fn resolve_target_mods(
 ) -> Result<Vec<TargetMod>> {
     let mut final_mods: HashMap<String, TargetMod> = HashMap::new(); // Key: Canonical Mod Identifier
     
-    // Enable Flagsmith blocking only if a NoRisk pack is selected
+    // Enable Flagsmith blocking only if a Copper pack is selected
     let enable_flagsmith_blocking = profile.selected_norisk_pack_id.is_some();
     
     if enable_flagsmith_blocking {
-        debug!("Flagsmith mod blocking is enabled (NoRisk pack selected)");
+        debug!("Flagsmith mod blocking is enabled (Copper pack selected)");
     } else {
-        debug!("Flagsmith mod blocking is disabled (no NoRisk pack selected)");
+        debug!("Flagsmith mod blocking is disabled (no Copper pack selected)");
     }
 
     // --- Helper: Get Canonical Key ---

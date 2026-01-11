@@ -136,7 +136,7 @@ async fn main() {
         eprintln!("FEHLER: Logging konnte nicht initialisiert werden: {}", e);
     }
 
-    info!("Starting NoRiskClient Launcher...");
+    info!("Starting CopperClient Launcher...");
 
     tauri::Builder::default()
         .plugin(tauri_plugin_process::init())
@@ -168,11 +168,11 @@ async fn main() {
                         use tauri_plugin_dialog::{DialogExt, MessageDialogKind};
                         let _ = app
                             .dialog()
-                            .message("The NoRisk Launcher encountered a critical error.\n\n\
+                            .message("The Copper Launcher encountered a critical error.\n\n\
                                 Please join our Discord for support:\n\
                                 https://discord.gg/norisk")
                             .kind(MessageDialogKind::Error)
-                            .title("NoRisk Launcher - Critical Error")
+                            .title("Copper Launcher - Critical Error")
                             .blocking_show();
                     }
 
@@ -187,14 +187,14 @@ async fn main() {
             let app_handle = app.handle().clone();
 
             // --- Initialize System Tray (Tauri 2.0) ---
-            let show_item = MenuItem::with_id(app, "show", "Show NoRisk Launcher", true, None::<&str>)?;
+            let show_item = MenuItem::with_id(app, "show", "Show Copper Launcher", true, None::<&str>)?;
             let quit_item = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
             let menu = Menu::with_items(app, &[&show_item, &quit_item])?;
 
             let _tray = TrayIconBuilder::new()
                 .menu(&menu)
                 .show_menu_on_left_click(false)
-                .tooltip("NoRisk Client Launcher")
+                .tooltip("Copper Client Launcher")
                 .icon(app.default_window_icon().unwrap().clone())
                 .on_menu_event(|app, event| match event.id.as_ref() {
                     "show" => {
@@ -381,11 +381,11 @@ async fn main() {
                                 use tauri_plugin_dialog::{DialogExt, MessageDialogKind};
                                 let _ = state_init_app_handle
                                     .dialog()
-                                    .message("The NoRisk Launcher encountered a critical error.\n\n\
+                                    .message("The Copper Launcher encountered a critical error.\n\n\
                                         Please join our Discord for support:\n\
                                         https://discord.gg/norisk")
                                     .kind(MessageDialogKind::Error)
-                                    .title("NoRisk Launcher - Critical Error")
+                                    .title("Copper Launcher - Critical Error")
                                     .blocking_show();
                             }
 
@@ -400,11 +400,11 @@ async fn main() {
                         use tauri_plugin_dialog::{DialogExt, MessageDialogKind};
                         let _ = state_init_app_handle
                             .dialog()
-                            .message("The NoRisk Launcher encountered a critical error.\n\n\
+                            .message("The Copper Launcher encountered a critical error.\n\n\
                                 Please join our Discord for support:\n\
                                 https://discord.gg/norisk")
                             .kind(MessageDialogKind::Error)
-                            .title("NoRisk Launcher - Critical Error")
+                            .title("Copper Launcher - Critical Error")
                             .blocking_show();
                     }
 

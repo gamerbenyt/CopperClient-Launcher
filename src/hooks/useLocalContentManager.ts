@@ -27,7 +27,7 @@ export interface LocalContentItem extends ProfileLocalContentItem {
 }
 
 // Enum for the types of content this hook can manage (used for UI/logic, maps to NrContentType for backend)
-export type LocalContentType = 'ShaderPack' | 'ResourcePack' | 'DataPack' | 'Mod' | 'NoRiskMod';
+export type LocalContentType = 'ShaderPack' | 'ResourcePack' | 'DataPack' | 'Mod' | 'CopperMod';
 
 interface UseLocalContentManagerProps<T extends LocalContentItem> {
   profile?: Profile;
@@ -106,7 +106,7 @@ function mapUiContentTypeToBackend(uiType: LocalContentType): NrContentType {
     case 'ShaderPack': return NrContentType.ShaderPack;
     case 'DataPack': return NrContentType.DataPack;
     case 'Mod': return NrContentType.Mod;
-    case 'NoRiskMod': return NrContentType.NoRiskMod;
+    case 'CopperMod': return NrContentType.CopperMod;
     default: throw new Error(`Unsupported UI content type: ${uiType}`);
   }
 }
@@ -155,9 +155,9 @@ function createUninstallPayload<T extends LocalContentItem>(
       return null;
     }
     return { profile_id: profileId, file_path: item.path };
-  } else if (uiContentType === 'NoRiskMod') {
-    toast.error("Direct uninstallation of NoRiskMod items is not supported via this method. Please manage NoRisk Packs directly.");
-    console.error("[useLocalContentManager] Attempted to create uninstall payload for NoRiskMod. This is generally not supported here.");
+  } else if (uiContentType === 'CopperMod') {
+    toast.error("Direct uninstallation of CopperMod items is not supported via this method. Please manage Copper Packs directly.");
+    console.error("[useLocalContentManager] Attempted to create uninstall payload for CopperMod. This is generally not supported here.");
     return null;
   }
 
@@ -180,12 +180,12 @@ function createTogglePayload<T extends LocalContentItem>(
     content_type: backendContentType,
   };
 
-  if (uiContentType === 'NoRiskMod') {
+  if (uiContentType === 'CopperMod') {
     const noriskIdentifierFromItem = (item as ProfileLocalContentItem).norisk_info; // Expect norisk_info from the item
     if (noriskIdentifierFromItem) {
       return { ...payloadBase, norisk_mod_identifier: noriskIdentifierFromItem }; // Map to payload's norisk_mod_identifier
     } else {
-      toast.error(`NoRiskMod item ${item.filename} is missing the norisk_info. Cannot toggle.`);
+      toast.error(`CopperMod item ${item.filename} is missing the norisk_info. Cannot toggle.`);
       return null;
     }
   } else if (uiContentType === 'Mod') {
@@ -645,10 +645,10 @@ export function useLocalContentManager<T extends LocalContentItem>({
           if (!item.path || localArchiveIcons[item.path] !== undefined) {
             return false;
           }
-          // For NoRiskMod, the item.path points to a .jar file in cache
+          // For CopperMod, the item.path points to a .jar file in cache
           // For other types, item.path usually points to a .zip file
           const lowerPath = item.path.toLowerCase();
-          if (contentType === 'NoRiskMod') {
+          if (contentType === 'CopperMod') {
             return lowerPath.endsWith('.jar');
           } else {
             return lowerPath.endsWith('.zip');
@@ -775,7 +775,7 @@ export function useLocalContentManager<T extends LocalContentItem>({
           return i;
         })
       );
-      if (contentType !== 'NoRiskMod' && onRefreshRequiredRef.current) {
+      if (contentType !== 'CopperMod' && onRefreshRequiredRef.current) {
         onRefreshRequiredRef.current();
       }
     } catch (err) {
@@ -1003,7 +1003,7 @@ export function useLocalContentManager<T extends LocalContentItem>({
       const request: UnifiedUpdateCheckRequest = {
         hashes,
         algorithm: "sha1",
-        loaders: (contentType === 'Mod' || contentType === 'NoRiskMod') && currentProfile.loader ? [currentProfile.loader] : [],
+        loaders: (contentType === 'Mod' || contentType === 'CopperMod') && currentProfile.loader ? [currentProfile.loader] : [],
         game_versions: [currentProfile.game_version],
         hash_platforms: hashPlatforms, // Neue Plattform-Mapping
         hash_fingerprints: Object.keys(hashFingerprints).length > 0 ? hashFingerprints : undefined,

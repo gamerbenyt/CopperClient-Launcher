@@ -296,7 +296,7 @@ impl NeoForgeInstaller {
                 uses_neoforgeclient = true;
             }
 
-            // fix https://github.com/NoRiskClient/issues/issues/1616 nobody knows.. 
+            // fix https://github.com/CopperClient/issues/issues/1616 nobody knows.. 
             // Check if version is 21.1.170 or greater
             if compare_versions(&target_neoforge_version, "21.1.170") != std::cmp::Ordering::Less {
                 uses_neoforgeclient = true;

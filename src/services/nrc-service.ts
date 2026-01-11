@@ -169,7 +169,7 @@ export const githubAuthUnlink = (): Promise<void> => {
 };
 
 /**
- * Gets the mobile app token for NoRisk mobile app linking.
+ * Gets the mobile app token for Copper mobile app linking.
  *
  * @returns A promise that resolves to the mobile app token string.
  * @throws If the backend command fails.
@@ -179,7 +179,7 @@ export const getMobileAppToken = (): Promise<string> => {
 };
 
 /**
- * Resets the mobile app token for NoRisk mobile app linking.
+ * Resets the mobile app token for Copper mobile app linking.
  *
  * @returns A promise that resolves to the new mobile app token string.
  * @throws If the backend command fails.

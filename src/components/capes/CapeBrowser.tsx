@@ -103,7 +103,7 @@ export function CapeBrowser(): JSX.Element {
     if (filters.showVanillaOnly) {
       return equippedCape?.id || null;
     }
-    // For NoRisk capes, we don't have equipped state yet
+    // For Copper capes, we don't have equipped state yet
     return null;
   }, [filters.showVanillaOnly, equippedCape]);
 
@@ -137,7 +137,7 @@ export function CapeBrowser(): JSX.Element {
       return [noCapeOption, ...filteredCapes];
     }
 
-    // When searching NoRisk capes, always show search results from allCapes
+    // When searching Copper capes, always show search results from allCapes
     if (searchQuery && searchQuery.trim() !== "") {
       return allCapes;
     }
@@ -582,7 +582,7 @@ export function CapeBrowser(): JSX.Element {
       const actualCapeId = capeHash === "no-cape" ? null : capeHash;
       promise = useVanillaCapeStore.getState().equipCape(actualCapeId);
     } else {
-      // For NoRisk capes, use the regular equip function
+      // For Copper capes, use the regular equip function
       promise = equipCape(capeHash);
     }
 

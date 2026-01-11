@@ -1,5 +1,5 @@
 use crate::error::{AppError, CommandError};
-use crate::minecraft::api::norisk_api::{AdventCalendarDay, CrashlogDto, NoRiskApi, ReferralInfo, Reward};
+use crate::minecraft::api::norisk_api::{AdventCalendarDay, CrashlogDto, CopperApi, ReferralInfo, Reward};
 use crate::minecraft::api::wordpress_api::{BlogPost, WordPressApi};
 use crate::minecraft::auth::minecraft_auth::Credentials;
 use crate::state::state_manager::State;
@@ -69,7 +69,7 @@ pub async fn discord_auth_link(app: AppHandle) -> Result<(), CommandError> {
 
     let window =
         WebviewWindowBuilder::new(&app, "discord-signin", WebviewUrl::External(external_url))
-            .title("Discord X NoRiskClient")
+            .title("Discord X CopperClient")
             .always_on_top(true)
             .center()
             .inner_size(500.0, 700.0)
@@ -162,7 +162,7 @@ pub async fn discord_auth_status() -> Result<bool, CommandError> {
         account_id_str, is_experimental
     );
 
-    Ok(NoRiskApi::discord_link_status(&token, &account_id_str, is_experimental).await?)
+    Ok(CopperApi::discord_link_status(&token, &account_id_str, is_experimental).await?)
 }
 
 #[tauri::command]
@@ -188,7 +188,7 @@ pub async fn discord_auth_unlink() -> Result<(), CommandError> {
         account_id_str, is_experimental
     );
 
-    NoRiskApi::unlink_discord(&token, &account_id_str, is_experimental).await?;
+    CopperApi::unlink_discord(&token, &account_id_str, is_experimental).await?;
     Ok(())
 }
 
@@ -240,7 +240,7 @@ pub async fn github_auth_link(app: AppHandle) -> Result<(), CommandError> {
 
     let window =
         WebviewWindowBuilder::new(&app, "github-signin", WebviewUrl::External(external_url))
-            .title("GitHub X NoRiskClient")
+            .title("GitHub X CopperClient")
             .always_on_top(true)
             .center()
             .inner_size(500.0, 700.0)
@@ -333,7 +333,7 @@ pub async fn github_auth_status() -> Result<bool, CommandError> {
         account_id_str, is_experimental
     );
 
-    Ok(NoRiskApi::github_link_status(&token, &account_id_str, is_experimental).await?)
+    Ok(CopperApi::github_link_status(&token, &account_id_str, is_experimental).await?)
 }
 
 #[tauri::command]
@@ -359,7 +359,7 @@ pub async fn github_auth_unlink() -> Result<(), CommandError> {
         account_id_str, is_experimental
     );
 
-    NoRiskApi::unlink_github(&token, &account_id_str, is_experimental).await?;
+    CopperApi::unlink_github(&token, &account_id_str, is_experimental).await?;
     Ok(())
 }
 
@@ -388,7 +388,7 @@ pub async fn submit_crash_log_command(payload: CrashlogDto) -> Result<(), Comman
         selected_account_arc.id, is_experimental
     );
 
-    NoRiskApi::submit_crash_log(
+    CopperApi::submit_crash_log(
         &token,
         &payload,
         &selected_account_arc.id.to_string(),
@@ -433,7 +433,7 @@ pub async fn get_mobile_app_token() -> Result<String, CommandError> {
         account_id_str, is_experimental
     );
 
-    Ok(NoRiskApi::get_mcreal_app_token(&token, &account_id_str, is_experimental).await?)
+    Ok(CopperApi::get_mcreal_app_token(&token, &account_id_str, is_experimental).await?)
 }
 
 #[tauri::command]
@@ -459,7 +459,7 @@ pub async fn reset_mobile_app_token() -> Result<String, CommandError> {
         account_id_str, is_experimental
     );
 
-    Ok(NoRiskApi::reset_mcreal_app_token(&token, &account_id_str, is_experimental).await?)
+    Ok(CopperApi::reset_mcreal_app_token(&token, &account_id_str, is_experimental).await?)
 }
 
 #[tauri::command]
@@ -510,7 +510,7 @@ pub async fn get_advent_calendar_command() -> Result<Vec<AdventCalendarDay>, Com
         account_id_str, is_experimental
     );
 
-    Ok(NoRiskApi::get_advent_calendar(&token, &account_id_str, is_experimental).await?)
+    Ok(CopperApi::get_advent_calendar(&token, &account_id_str, is_experimental).await?)
 }
 
 #[tauri::command]
@@ -536,7 +536,7 @@ pub async fn claim_advent_calendar_day_command(tag: u32) -> Result<AdventCalenda
         tag, account_id_str, is_experimental
     );
 
-    Ok(NoRiskApi::claim_advent_calendar_day(&token, tag, &account_id_str, is_experimental).await?)
+    Ok(CopperApi::claim_advent_calendar_day(&token, tag, &account_id_str, is_experimental).await?)
 }
 
 /// Get information about a referral code.
@@ -551,5 +551,5 @@ pub async fn get_referral_info(code: String) -> Result<ReferralInfo, CommandErro
     // let state = State::get().await?;
     // let is_experimental = state.config_manager.is_experimental_mode().await;
 
-    Ok(NoRiskApi::get_referral_info(&code, is_experimental).await?)
+    Ok(CopperApi::get_referral_info(&code, is_experimental).await?)
 }

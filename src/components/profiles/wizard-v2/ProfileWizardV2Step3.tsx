@@ -86,7 +86,7 @@ export function ProfileWizardV2Step3({
     const [creating, setCreating] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    // Load NoRisk packs on component mount
+    // Load Copper packs on component mount
     useEffect(() => {
         const loadNoriskPacks = async () => {
             try {
@@ -104,7 +104,7 @@ export function ProfileWizardV2Step3({
                     setSelectedNoriskPackId("norisk-prod");
                 }
             } catch (err) {
-                console.error("Failed to load NoRisk packs:", err);
+                console.error("Failed to load Copper packs:", err);
             } finally {
                 setLoadingPacks(false);
             }
@@ -158,7 +158,7 @@ export function ProfileWizardV2Step3({
                     "get_norisk_packs_resolved"
                 );
 
-                // Check if the selected pack has NoRisk Client mods for this version/loader
+                // Check if the selected pack has Copper Client mods for this version/loader
                 const selectedPack = resolvedPacks.packs[selectedNoriskPackId];
 
                 if (!selectedPack) {
@@ -169,9 +169,9 @@ export function ProfileWizardV2Step3({
                 // Get the mods in the pack
                 const mods = selectedPack.mods || [];
 
-                // Check if any NoRisk Client mod exists and is compatible with the selected version/loader
-                const hasCompatibleNoRiskClient = mods.some((mod: NoriskModEntryDefinition) => {
-                    // Check if this is a NoRisk Client mod
+                // Check if any Copper Client mod exists and is compatible with the selected version/loader
+                const hasCompatibleCopperClient = mods.some((mod: NoriskModEntryDefinition) => {
+                    // Check if this is a Copper Client mod
                     if (mod.id === "noriskclient-client" || mod.id === "nrc-client") {
                         // Check if it has compatibility for the selected version and loader
                         const versionCompat = mod.compatibility?.[selectedMinecraftVersion];
@@ -189,9 +189,9 @@ export function ProfileWizardV2Step3({
                 });
 
                 console.log("Pack mods for", selectedNoriskPackId, selectedMinecraftVersion, selectedLoader, ":", mods);
-                console.log("Has compatible NoRisk Client:", hasCompatibleNoRiskClient);
+                console.log("Has compatible Copper Client:", hasCompatibleCopperClient);
 
-                if (!hasCompatibleNoRiskClient) {
+                if (!hasCompatibleCopperClient) {
                     setShowYellowWarning(true);
                 }
             } catch (err) {
@@ -357,13 +357,13 @@ export function ProfileWizardV2Step3({
 
                     {showAdvancedSettings && (
                         <div className="space-y-4 p-4 bg-white/5 border border-white/10 rounded-lg">
-                            {/* NoRisk Pack Selection */}
+                            {/* Copper Pack Selection */}
                             <div className="space-y-3">
                                 <label className="block text-base font-minecraft-ten text-white/50">
-                                    NoRisk Client Pack
+                                    Copper Client Pack
                                 </label>
                                 <p className="text-sm text-white/60 font-minecraft-ten">
-                                    NoRiskClient packs are predefined mod collections from NoRiskClient, including performance mods like Sodium, Fabric API, ImmediatelyFast, and mods for seamless NoRiskClient experience. You can disable this to start without NoRiskClient features.
+                                    CopperClient packs are predefined mod collections from CopperClient, including performance mods like Sodium, Fabric API, ImmediatelyFast, and mods for seamless CopperClient experience. You can disable this to start without CopperClient features.
                                 </p>
                                 {loadingPacks ? (
                                     <div className="flex items-center gap-2 text-white/70">
@@ -372,7 +372,7 @@ export function ProfileWizardV2Step3({
                                             className="w-4 h-4 animate-spin"
                                         />
                                         <span className="text-sm font-minecraft-ten">
-                                            Loading NoRisk packs...
+                                            Loading Copper packs...
                                         </span>
                                     </div>
                                 ) : (
@@ -386,7 +386,7 @@ export function ProfileWizardV2Step3({
                                                         { value: "", label: "None (Optional)" },
                                                         ...noriskPackOptions,
                                                     ]}
-                                                    placeholder="Select a NoRisk pack..."
+                                                    placeholder="Select a Copper pack..."
                                                     size="md"
                                                     className="w-full"
                                                 />
@@ -405,7 +405,7 @@ export function ProfileWizardV2Step3({
                                         {showYellowWarning ? (
                                             <div className="text-center">
                                                 <p className="text-base text-yellow-400 font-minecraft-ten">
-                                                    NoRiskClient is not currently compatible with this loader or version!<br />
+                                                    CopperClient is not currently compatible with this loader or version!<br />
                                                     You can still create it, but you won't have the features.<br />
                                                     This may change in the future.
                                                 </p>
@@ -413,7 +413,7 @@ export function ProfileWizardV2Step3({
                                         ) : selectedNoriskPackId === null || selectedNoriskPackId === "" ? (
                                             <div className="text-center">
                                                 <p className="text-sm text-amber-400 font-minecraft-ten">
-                                                    You won't have any NoRiskClient features with this selection.
+                                                    You won't have any CopperClient features with this selection.
                                                 </p>
                                             </div>
                                         ) : (

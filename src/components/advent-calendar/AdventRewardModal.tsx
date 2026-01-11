@@ -173,33 +173,6 @@ function RewardDisplay({ reward, shopItemName, shopItemModelUrl }: { reward: Rew
           </div>
         );
 
-      case "NrcPlus":
-        return (
-          <div className="flex flex-col items-center gap-4">
-            <div
-              className="w-24 h-24 rounded-lg flex items-center justify-center border-2"
-              style={{
-                backgroundColor: `${accentColor.value}20`,
-                borderColor: accentColor.value,
-              }}
-            >
-              <Icon
-                icon="solar:star-bold"
-                className="w-16 h-16"
-                style={{ color: accentColor.value }}
-              />
-            </div>
-            <div className="text-center">
-              <p className="font-minecraft-ten text-xl text-white mb-1">
-                NoRisk Plus
-              </p>
-              <p className="font-minecraft-ten text-white/60 text-sm">
-                {Math.floor(reward.duration / (1000 * 60 * 60 * 24))} days
-              </p>
-            </div>
-          </div>
-        );
-
       case "Theme":
         const theme = LAUNCHER_THEMES[reward.themeId];
         const themeImage = theme?.backgroundImage;

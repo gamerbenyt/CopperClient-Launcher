@@ -462,7 +462,7 @@
         },
         {
           "id": "noriskclient-fabric-utils",
-          "displayName": "NoRiskClient-Fabric-Utils",
+          "displayName": "CopperClient-Fabric-Utils",
           "source": {
             "type": "maven",
             "repositoryRef": "noriskproduction",
@@ -492,7 +492,7 @@
         },
         {
           "id": "noriskclient-ui",
-          "displayName": "NoRiskClient-UI",
+          "displayName": "CopperClient-UI",
           "source": {
             "type": "maven",
             "repositoryRef": "noriskproduction",
@@ -522,7 +522,7 @@
         },
         {
           "id": "noriskclient-client",
-          "displayName": "NoRiskClient-Client",
+          "displayName": "CopperClient-Client",
           "source": {
             "type": "maven",
             "repositoryRef": "noriskproduction",
@@ -552,7 +552,7 @@
         },
         {
           "id": "noriskclient-cosmetics",
-          "displayName": "NoRiskClient-Cosmetics",
+          "displayName": "CopperClient-Cosmetics",
           "source": {
             "type": "maven",
             "repositoryRef": "noriskproduction",
@@ -582,7 +582,7 @@
         },
         {
           "id": "noriskclient-friends",
-          "displayName": "NoRiskClient-Friends",
+          "displayName": "CopperClient-Friends",
           "source": {
             "type": "maven",
             "repositoryRef": "noriskproduction",
@@ -612,7 +612,7 @@
         },
         {
           "id": "noriskclient-mcreal",
-          "displayName": "NoRiskClient-McReal",
+          "displayName": "CopperClient-McReal",
           "source": {
             "type": "maven",
             "repositoryRef": "noriskproduction",
@@ -642,7 +642,7 @@
         },
         {
           "id": "noriskclient-minigames",
-          "displayName": "NoRiskClient-Minigames",
+          "displayName": "CopperClient-Minigames",
           "source": {
             "type": "maven",
             "repositoryRef": "noriskproduction",
@@ -1316,7 +1316,7 @@
         },
         {
           "id": "norisk-fabric-utils",
-          "displayName": "NoRiskClient-Fabric-Utils",
+          "displayName": "CopperClient-Fabric-Utils",
           "source": {
             "type": "maven",
             "repositoryRef": "noriskproduction",
@@ -1361,7 +1361,7 @@
         },
         {
           "id": "old-noriskclient",
-          "displayName": "Old NoRiskClient",
+          "displayName": "Old CopperClient",
           "source": {
             "type": "url"
           },

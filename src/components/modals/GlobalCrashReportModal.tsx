@@ -245,7 +245,7 @@ export function GlobalCrashReportModal() {
       }
 
       if (currentMclogsUrl && !noriskReportSubmitted) {
-        toast.loading('Submitting crash report to NoRisk...', { id: mainToastId });
+        toast.loading('Submitting crash report to Copper...', { id: mainToastId });
         const crashReportPayload: CrashlogDto = {
           mcLogsUrl: currentMclogsUrl,
           metadata: crashData.process_metadata!, 
@@ -295,7 +295,7 @@ export function GlobalCrashReportModal() {
   const handleContactSupport = async () => {
     try {
       await openExternalUrl('https://discord.norisk.gg');
-      toast.success("Opened NoRisk Discord in your browser!");
+      toast.success("Opened Copper Discord in your browser!");
     } catch (error) {
       console.error("Failed to open Discord URL:", error);
       toast.error("Could not open Discord. Please go to discord.norisk.gg manually.");

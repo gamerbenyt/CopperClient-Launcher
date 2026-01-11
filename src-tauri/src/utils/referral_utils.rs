@@ -3,7 +3,7 @@
 //! Flow:
 //! 1. NSIS installer writes referral code to referral_code.txt in install dir
 //! 2. On startup, we read the code and save it to config.referral_state
-//! 3. After login (when we have a NoRisk token), we report the code
+//! 3. After login (when we have a Copper token), we report the code
 //! 4. On successful report, we set redeemed=true (code stays for tracing!)
 
 use log::{debug, error, info, warn};
@@ -12,7 +12,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use uuid::Uuid;
 
 use crate::error::Result;
-use crate::minecraft::api::norisk_api::NoRiskApi;
+use crate::minecraft::api::norisk_api::CopperApi;
 use crate::state::config_state::ReferralState;
 use crate::state::State;
 
@@ -84,7 +84,7 @@ pub async fn check_and_process_referral_code() -> Result<()> {
 }
 
 /// Report pending referral code after login.
-/// This function handles getting the NoRisk token and reporting the referral code.
+/// This function handles getting the Copper token and reporting the referral code.
 /// Call this after successful login.
 ///
 /// # Arguments
@@ -135,7 +135,7 @@ pub async fn report_referral_after_login(account_id: Uuid) -> Result<()> {
     let norisk_token = match token {
         Some(t) => &t.value,
         None => {
-            warn!("[Referral] Failed to get NoRisk token for referral report");
+            warn!("[Referral] Failed to get Copper token for referral report");
             return Ok(());
         }
     };
@@ -144,11 +144,11 @@ pub async fn report_referral_after_login(account_id: Uuid) -> Result<()> {
     report_referral_with_token(norisk_token, account_id, is_experimental).await
 }
 
-/// Report pending referral code using NoRisk token (secure, after login).
-/// Call this after successful login when we have a valid NoRisk token.
+/// Report pending referral code using Copper token (secure, after login).
+/// Call this after successful login when we have a valid Copper token.
 ///
 /// # Arguments
-/// * `norisk_token` - The NoRisk JWT token for authentication
+/// * `norisk_token` - The Copper JWT token for authentication
 /// * `account_id` - The Minecraft account UUID
 /// * `is_experimental` - Whether to use staging or production API
 async fn report_referral_with_token(
@@ -174,7 +174,7 @@ async fn report_referral_with_token(
 
     info!("[Referral] Reporting referral code: {} for account: {}", referral_state.code, account_id);
 
-    match NoRiskApi::report_referral_code(norisk_token, &referral_state.code, account_id, is_experimental).await {
+    match CopperApi::report_referral_code(norisk_token, &referral_state.code, account_id, is_experimental).await {
         Ok(_) => {
             info!("[Referral] Successfully reported referral code");
 

@@ -2,8 +2,8 @@
   "profiles": [
     {
       "id": "ea361d90-5541-4a2a-8eea-8cf1f822d6cb",
-      "name": "NRC DEV 1.21",
-      "description": "NoRisk Client 1.21",
+      "name": "CC DEV 1.21",
+      "description": "Copper Client 1.21",
       "game_version": "1.21",
       "loader": "fabric",
       "loader_version": "0.16.13",
@@ -21,8 +21,8 @@
     },
     {
       "id": "fc452b71-8e34-4b7a-9d2c-a6f13e5c7d8f",
-      "name": "NRC DEV 1.21.4",
-      "description": "NoRisk Client 1.21.4",
+      "name": "CC DEV 1.21.4",
+      "description": "Copper Client 1.21.4",
       "game_version": "1.21.4",
       "loader": "fabric",
       "loader_version": "0.16.13",
@@ -40,8 +40,8 @@
     },
     {
       "id": "b7cd5e92-3a16-4f85-bc60-9d8e47a1f3d2",
-      "name": "NRC DEV 1.21.5",
-      "description": "NoRisk Client 1.21.5",
+      "name": "CC DEV 1.21.5",
+      "description": "Copper Client 1.21.5",
       "game_version": "1.21.5",
       "loader": "fabric",
       "loader_version": "0.16.13",

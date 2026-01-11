@@ -9,8 +9,8 @@ use tauri::Manager; // Keep for app_handle.state()
 use tokio::sync::{Mutex, RwLock};
 use uuid::Uuid;
 
-// Discord application ID for NoRiskClient
-const DISCORD_APP_ID: &str = "1237087999104122981"; // Replace with actual Discord application ID
+// Discord application ID for CopperClient
+const DISCORD_APP_ID: &str = "1459667271944503296"; // Replace with actual Discord application ID
 
 // Different states for Discord Rich Presence
 #[derive(Debug, Clone, PartialEq)]
@@ -263,7 +263,7 @@ impl DiscordManager {
                     .assets(
                         activity::Assets::new()
                             .large_image(icon)
-                            .large_text("NoRiskClient"),
+                            .large_text("CopperClient"),
                     )
                     .timestamps(activity::Timestamps::new().start(start_time))
                     .buttons(buttons) // Include buttons here

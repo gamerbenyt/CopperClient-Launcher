@@ -102,8 +102,8 @@ export interface ModrinthProjectCardV2Props
   onToggleVersionsClick: (projectId: string) => void;
   isExpanded: boolean;
   isLoadingVersions: boolean;
-  isBlocked?: boolean; // Deprecated, use projectNoRiskStatus instead
-  projectNoRiskStatus?: 'blocked' | 'warning' | null;
+  isBlocked?: boolean; // Deprecated, use projectCopperStatus instead
+  projectCopperStatus?: 'blocked' | 'warning' | null;
   projectVersions: UnifiedVersion[] | null | "loading";
   displayedCount: number;
   versionDropdownUIState: {
@@ -196,7 +196,7 @@ export const ModrinthProjectCardV2 = React.memo<ModrinthProjectCardV2Props>(
     onToggleEnableClick,
     itemIndex,
     isBlocked = false, // Deprecated
-    projectNoRiskStatus = null,
+    projectCopperStatus = null,
   }) => {
     const navigate = useNavigate();
 
@@ -234,9 +234,9 @@ export const ModrinthProjectCardV2 = React.memo<ModrinthProjectCardV2Props>(
         )}
       >
         {/* Blocked Mod Warning Icon - Top Left */}
-        {projectNoRiskStatus === 'blocked' && (
+        {projectCopperStatus === 'blocked' && (
           <div className="absolute top-2 left-2 z-10 pointer-events-auto">
-            <Tooltip content="This mod is blocked by NoRisk Client as it is known to cause crashes or severe compatibility issues. Installation is not recommended.">
+            <Tooltip content="This mod is blocked by Copper Client as it is known to cause crashes or severe compatibility issues. Installation is not recommended.">
               <div>
                 <Icon 
                   icon="solar:danger-triangle-bold" 
@@ -246,9 +246,9 @@ export const ModrinthProjectCardV2 = React.memo<ModrinthProjectCardV2Props>(
             </Tooltip>
           </div>
         )}
-        {projectNoRiskStatus === 'warning' && (
+        {projectCopperStatus === 'warning' && (
           <div className="absolute top-2 left-2 z-10 pointer-events-auto">
-            <Tooltip content="This version is known to cause crashes or compatibility issues with NoRisk Client. Installation is possible but not recommended.">
+            <Tooltip content="This version is known to cause crashes or compatibility issues with Copper Client. Installation is possible but not recommended.">
               <div>
                 <Icon 
                   icon="solar:danger-triangle-bold" 
@@ -259,9 +259,9 @@ export const ModrinthProjectCardV2 = React.memo<ModrinthProjectCardV2Props>(
           </div>
         )}
         {/* Fallback for deprecated isBlocked prop */}
-        {!projectNoRiskStatus && isBlocked && (
+        {!projectCopperStatus && isBlocked && (
           <div className="absolute top-2 left-2 z-10 pointer-events-auto">
-            <Tooltip content="This mod is blocked by NoRisk Client as it is known to cause crashes or severe compatibility issues. Installation is not recommended.">
+            <Tooltip content="This mod is blocked by Copper Client as it is known to cause crashes or severe compatibility issues. Installation is not recommended.">
               <div>
                 <Icon 
                   icon="solar:danger-triangle-bold" 
@@ -371,7 +371,7 @@ export const ModrinthProjectCardV2 = React.memo<ModrinthProjectCardV2Props>(
                     }
                     size="sm"
                   >
-                    NoRisk Pack
+                    Copper Pack
                   </TagBadge>
                 )}
               </>
@@ -420,7 +420,7 @@ export const ModrinthProjectCardV2 = React.memo<ModrinthProjectCardV2Props>(
               icon={
                 isQuickInstalling 
                   ? "solar:refresh-bold" 
-                  : (projectNoRiskStatus === 'blocked' || projectNoRiskStatus === 'warning')
+                  : (projectCopperStatus === 'blocked' || projectCopperStatus === 'warning')
                     ? "solar:danger-triangle-bold"
                     : "solar:download-minimalistic-bold"
               }
@@ -492,7 +492,7 @@ export const ModrinthProjectCardV2 = React.memo<ModrinthProjectCardV2Props>(
               onDeleteClick={onDeleteVersionClick}
                 onToggleEnableClick={onToggleEnableClick}
                 isProjectBlocked={isBlocked}
-                projectNoRiskStatus={projectNoRiskStatus || (isBlocked ? 'blocked' : null)}
+                projectCopperStatus={projectCopperStatus || (isBlocked ? 'blocked' : null)}
               />
             </div>
           )}

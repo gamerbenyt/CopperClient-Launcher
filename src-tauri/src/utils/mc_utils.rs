@@ -904,7 +904,7 @@ pub async fn copy_startup_helper_files(
 
     if !norisk_dir.exists() {
         info!(
-            "[{}] NoRiskClient new directory not found at: {}, skipping StartUpHelper.",
+            "[{}] CopperClient new directory not found at: {}, skipping StartUpHelper.",
             profile_id,
             norisk_dir.display()
         );
@@ -912,7 +912,7 @@ pub async fn copy_startup_helper_files(
     }
 
     info!(
-        "[{}] Found NoRiskClient new directory at: {}",
+        "[{}] Found CopperClient new directory at: {}",
         profile_id,
         norisk_dir.display()
     );

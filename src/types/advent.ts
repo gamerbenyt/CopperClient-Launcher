@@ -51,12 +51,8 @@ export interface DiscountReward extends RewardBase {
 }
 
 /**
- * NoRisk Plus reward.
+ * Copper Plus reward.
  */
-export interface NrcPlusReward extends RewardBase {
-  type: "NrcPlus";
-  duration: number; // Duration in milliseconds
-}
 
 /**
  * Theme reward.
@@ -74,7 +70,6 @@ export type Reward =
   | ShopItemReward
   | RandomShopItemReward
   | DiscountReward
-  | NrcPlusReward
   | ThemeReward;
 
 /**

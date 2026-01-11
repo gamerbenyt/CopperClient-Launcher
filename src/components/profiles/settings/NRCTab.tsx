@@ -54,7 +54,7 @@ export function NRCTab({
     }
   }, [isBackgroundAnimationEnabled]);
 
-  // Load NoRisk packs on component mount
+  // Load Copper packs on component mount
   useEffect(() => {
     const loadNoriskPacks = async () => {
       try {
@@ -67,7 +67,7 @@ export function NRCTab({
         console.log("PACKS", packsData);
         setNoriskPacks(packsData.packs);
       } catch (err) {
-        console.error("Failed to load NoRisk packs:", err);
+        console.error("Failed to load Copper packs:", err);
       } finally {
         setLoading(false);
       }
@@ -106,7 +106,7 @@ export function NRCTab({
           "get_norisk_packs_resolved"
         );
 
-        // Check if the selected pack has NoRisk Client mods
+        // Check if the selected pack has Copper Client mods
         if (!resolvedPacks.packs[editedProfile.selected_norisk_pack_id]) {
           setShowYellowWarning(true);
           return;
@@ -141,14 +141,14 @@ export function NRCTab({
       <div className="space-y-6">
 
 
-        {/* NoRisk Pack Selection */}
+        {/* Copper Pack Selection */}
         <div className="space-y-3">
           <div className="space-y-2">
             <label className="block text-3xl font-minecraft text-white mb-2 lowercase">
               info
             </label>
             <p className="text-sm text-white/60 font-minecraft-ten">
-              NoRiskClient packs are predefined mod collections from NoRiskClient, including performance mods like Sodium, Fabric API, ImmediatelyFast, and mods for seamless NoRiskClient experience. You can disable this to start without NoRiskClient features.
+              CopperClient packs are predefined mod collections from CopperClient, including performance mods like Sodium, Fabric API, ImmediatelyFast, and mods for seamless CopperClient experience. You can disable this to start without CopperClient features.
             </p>
           </div>
           {loading ? (
@@ -158,7 +158,7 @@ export function NRCTab({
                 className="w-4 h-4 animate-spin"
               />
               <span className="text-sm font-minecraft-ten">
-                Loading NoRisk packs...
+                Loading Copper packs...
               </span>
             </div>
           ) : (
@@ -193,7 +193,7 @@ export function NRCTab({
               {showYellowWarning ? (
                 <div className="text-center">
                   <p className="text-base text-yellow-400 font-minecraft-ten">
-                    NoRiskClient is not currently compatible with this loader or version!
+                    CopperClient is not currently compatible with this loader or version!
                     You can still create it, but you won't have the features.
                     This may change in the future.
                   </p>
@@ -201,7 +201,7 @@ export function NRCTab({
               ) : editedProfile.selected_norisk_pack_id === null || editedProfile.selected_norisk_pack_id === "" ? (
                 <div className="text-center">
                   <p className="text-sm text-amber-400 font-minecraft-ten">
-                    You won't have any NoRiskClient features with this selection.
+                    You won't have any CopperClient features with this selection.
                   </p>
                 </div>
               ) : (

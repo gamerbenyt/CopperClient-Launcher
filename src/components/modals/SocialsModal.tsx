@@ -278,7 +278,7 @@ export function SocialsModal() {
       key: "github",
       name: "GitHub",
       icon: "mdi:github",
-      visitUrl: "https://github.com/NoRiskClient",
+      visitUrl: "https://github.com/CopperClient",
       isImplemented: true,
       fetchStatus: fetchGithubStatus,
       handleLink: handleGithubLink,
@@ -395,7 +395,7 @@ export function SocialsModal() {
             <div className="flex justify-center p-3 bg-black/10 rounded-md">
               <div className="text-center space-y-2">
                 <p className="text-white/70 font-minecraft-ten text-xs">
-                  Scan with NoRisk Client mobile App
+                  Scan with Copper Client mobile App
                 </p>
                 <img
                   src={generateQrCodeUrl()}

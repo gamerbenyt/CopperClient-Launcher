@@ -1,7 +1,7 @@
 use crate::config::{ProjectDirsExt, LAUNCHER_DIRECTORY};
 use crate::error::Result;
 use crate::integrations::norisk_packs::NoriskModpacksConfig;
-use crate::minecraft::api::norisk_api::NoRiskApi;
+use crate::minecraft::api::norisk_api::CopperApi;
 use crate::state::post_init::PostInitializationHandler;
 use async_trait::async_trait;
 use log::{debug, error, info};
@@ -83,7 +83,7 @@ impl NoriskPackManager {
     ) -> Result<()> {
         info!("Fetching latest Norisk packs config from API...");
 
-        match NoRiskApi::get_modpacks(norisk_token, is_experimental).await {
+        match CopperApi::get_modpacks(norisk_token, is_experimental).await {
             Ok(new_config) => {
                 debug!(
                     "Successfully fetched {} packs definitions from API.",

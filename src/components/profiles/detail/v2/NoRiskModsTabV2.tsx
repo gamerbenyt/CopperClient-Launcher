@@ -16,40 +16,40 @@ import type {
   NoriskModSourceDefinition,
 } from "../../../../types/noriskPacks"; // Changed NoriskPackMod to NoriskModEntryDefinition
 import * as ProfileService from "../../../../services/profile-service"; // Import ProfileService
-// import { ModrinthService } from "../../../../services/modrinth-service"; // No Modrinth specific service needed for NoRisk
+// import { ModrinthService } from "../../../../services/modrinth-service"; // No Modrinth specific service needed for Copper
 import { SearchInput } from "../../../ui/SearchInput";
 import { Checkbox } from "../../../ui/Checkbox";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event"; // For state updates
 import { GenericDetailListItem } from "../items/GenericDetailListItem";
 import { toast } from "react-hot-toast";
-// import { toggleContentFromProfile } from "../../../../services/content-service"; // NoRisk has its own toggle
+// import { toggleContentFromProfile } from "../../../../services/content-service"; // Copper has its own toggle
 // import type { ToggleContentPayload } from "../../../../types/content"; // Not directly needed
 import { Select, type SelectOption } from "../../../ui/Select"; // Import Select and SelectOption
 
-// Icons specific to NoRiskModsTabV2 (can be adjusted)
+// Icons specific to CopperModsTabV2 (can be adjusted)
 const NORISK_MODS_TAB_ICONS_TO_PRELOAD = [
-  "solar:shield-bold-duotone", // Fallback icon, empty state, NoRisk theme
+  "solar:shield-bold-duotone", // Fallback icon, empty state, Copper theme
   "solar:settings-bold-duotone",
   "solar:info-circle-bold-duotone",
   "solar:check-circle-bold", // Enabled status
   "solar:close-circle-bold", // Disabled status
-  "solar:box-bold-duotone", // Generic mod icon (if no specific NoRisk icon)
+  "solar:box-bold-duotone", // Generic mod icon (if no specific Copper icon)
   "solar:folder-open-bold-duotone",
-  "solar:trash-bin-trash-bold", // Might not be used if NoRisk mods are not deletable
+  "solar:trash-bin-trash-bold", // Might not be used if Copper mods are not deletable
   "solar:menu-dots-bold",
   "solar:sort-from_top_to_bottom-bold-duotone",
   "solar:refresh-square-bold-duotone",
-  // "solar:cloud-download-bold-duotone", // NoRisk mods are not individually downloaded/updated this way
-  "solar:refresh-bold", // For Refreshing NoRisk Pack list
+  // "solar:cloud-download-bold-duotone", // Copper mods are not individually downloaded/updated this way
+  "solar:refresh-bold", // For Refreshing Copper Pack list
   "solar:add-circle-bold-duotone", // Might not be used if mods are only from pack
   "solar:refresh-outline",
-  // "solar:double-alt-arrow-up-bold-duotone" // No "Update All" for NoRisk mods
+  // "solar:double-alt-arrow-up-bold-duotone" // No "Update All" for Copper mods
   "solar:danger-triangle-bold", // For errors
 ];
 
-// Adapted from NoRiskModsTab.tsx
-interface NoRiskModV2 {
+// Adapted from CopperModsTab.tsx
+interface CopperModV2 {
   id: string; // Typically the mod's unique identifier within the pack
   display_name: string;
   description?: string;
@@ -60,31 +60,31 @@ interface NoRiskModV2 {
   // We will store fetched local icons in a separate state similar to ModsTabV2/ResourcePacksTabV2
 }
 
-interface NoRiskModsTabV2Props {
+interface CopperModsTabV2Props {
   profile: Profile; // Profile is required
   onRefreshRequired?: () => void;
 }
 
 // Helper (can be adapted or removed if not needed)
-// const getModFileNameFromSource = (mod: NoRiskModV2 | null | undefined): string | null => { ... }
+// const getModFileNameFromSource = (mod: CopperModV2 | null | undefined): string | null => { ... }
 
-export function NoRiskModsTabV2({
+export function CopperModsTabV2({
   profile,
   onRefreshRequired,
-}: NoRiskModsTabV2Props) {
+}: CopperModsTabV2Props) {
   if (!profile) {
     // This should ideally not happen if Profile is marked as required
     // but as a safeguard:
     return (
       <div className="p-4 font-minecraft text-center text-white/70">
-        Profile data is not available. Cannot display NoRisk mods.
+        Profile data is not available. Cannot display Copper mods.
       </div>
     );
   }
 
   const accentColor = useThemeStore((state) => state.accentColor);
 
-  const [noriskMods, setNoriskMods] = useState<NoRiskModV2[]>([]);
+  const [noriskMods, setNoriskMods] = useState<CopperModV2[]>([]);
   const [noriskPacksConfig, setNoriskPacksConfig] =
     useState<NoriskModpacksConfig | null>(null);
   const [localIcons, setLocalIcons] = useState<Record<string, string | null>>(
@@ -129,7 +129,7 @@ export function NoRiskModsTabV2({
     ],
   );
 
-  const fetchModIconsForNoRisk = useCallback(
+  const fetchModIconsForCopper = useCallback(
     async (compatibleRawMods: NoriskModEntryDefinition[]) => {
       if (compatibleRawMods.length === 0) {
         setLocalIcons({});
@@ -150,7 +150,7 @@ export function NoRiskModsTabV2({
           setLocalIcons({});
         }
       } catch (err) {
-        console.error("Failed to fetch NoRisk mod icons:", err);
+        console.error("Failed to fetch Copper mod icons:", err);
         setLocalIcons({});
       }
     },
@@ -172,7 +172,7 @@ export function NoRiskModsTabV2({
         });
       }
 
-      const processedMods: NoRiskModV2[] = compatibleRawMods.map((rawMod) => {
+      const processedMods: CopperModV2[] = compatibleRawMods.map((rawMod) => {
         let version: string | undefined = undefined;
         if (
           rawMod.compatibility &&
@@ -198,7 +198,7 @@ export function NoRiskModsTabV2({
       setNoriskMods(processedMods);
 
       if (compatibleRawMods.length > 0) {
-        await fetchModIconsForNoRisk(compatibleRawMods);
+        await fetchModIconsForCopper(compatibleRawMods);
       } else {
         setLocalIcons({});
       }
@@ -207,7 +207,7 @@ export function NoRiskModsTabV2({
       isNoriskModDisabled,
       profile.game_version,
       profile.loader,
-      fetchModIconsForNoRisk,
+      fetchModIconsForCopper,
     ],
   );
 
@@ -221,7 +221,7 @@ export function NoRiskModsTabV2({
           currentPacksConfig = await ProfileService.getNoriskPacksResolved();
         } catch (resolvedError) {
           console.warn(
-            "Failed to get resolved NoRisk packs, trying basic:",
+            "Failed to get resolved Copper packs, trying basic:",
             resolvedError,
           );
           currentPacksConfig = await ProfileService.getNoriskPacks();
@@ -285,7 +285,7 @@ export function NoRiskModsTabV2({
             } catch (lastResortError) {
               console.error("list_norisk_mods also failed:", lastResortError);
               throw new Error(
-                `Failed to load NoRisk mods. Pack: ${profile.selected_norisk_pack_id}. Error: ${lastResortError}`,
+                `Failed to load Copper mods. Pack: ${profile.selected_norisk_pack_id}. Error: ${lastResortError}`,
               );
             }
           }
@@ -297,7 +297,7 @@ export function NoRiskModsTabV2({
           setNoriskMods([]);
           setLocalIcons({});
           console.log(
-            "No NoRisk mods found for pack:",
+            "No Copper mods found for pack:",
             profile.selected_norisk_pack_id,
           );
         }
@@ -306,9 +306,9 @@ export function NoRiskModsTabV2({
         setLocalIcons({});
       }
     } catch (err) {
-      console.error("Failed to load NoRisk packs or mods:", err);
+      console.error("Failed to load Copper packs or mods:", err);
       setError(
-        `Failed to load NoRisk data: ${err instanceof Error ? err.message : String(err)}`,
+        `Failed to load Copper data: ${err instanceof Error ? err.message : String(err)}`,
       );
       setNoriskMods([]);
       setLocalIcons({});
@@ -376,19 +376,19 @@ export function NoRiskModsTabV2({
       // For explicit control:
       await fetchNoriskPacksAndMods();
     } catch (err) {
-      console.error("Failed to refresh NoRisk packs list:", err);
+      console.error("Failed to refresh Copper packs list:", err);
       setError(
-        `Failed to refresh NoRisk packs: ${err instanceof Error ? err.message : String(err)}`,
+        `Failed to refresh Copper packs: ${err instanceof Error ? err.message : String(err)}`,
       );
     } finally {
       setIsRefreshingPacks(false);
     }
   };
 
-  const handleToggleNoRiskMod = useCallback(
+  const handleToggleCopperMod = useCallback(
     async (modId: string) => {
       if (!profile.selected_norisk_pack_id) {
-        toast.error("No NoRisk pack selected.");
+        toast.error("No Copper pack selected.");
         return;
       }
       const mod = noriskMods.find((m) => m.id === modId);
@@ -420,7 +420,7 @@ export function NoRiskModsTabV2({
         // No onRefreshRequired() needed here if optimistic update is sufficient for UI.
         // The actual profile.disabled_norisk_mods_detailed will be updated on next full refresh/load.
       } catch (err) {
-        console.error(`Failed to toggle NoRisk mod ${mod.display_name}:`, err);
+        console.error(`Failed to toggle Copper mod ${mod.display_name}:`, err);
         toast.error(
           `Failed to toggle ${mod.display_name}: ${err instanceof Error ? err.message : String(err.message)}`,
         );
@@ -458,7 +458,7 @@ export function NoRiskModsTabV2({
     });
   }, [noriskMods, searchQuery]);
 
-  // Define handleModSelectionChange first as renderNoRiskModItem depends on it.
+  // Define handleModSelectionChange first as renderCopperModItem depends on it.
   const handleModSelectionChange = useCallback(
     (modId: string, isSelected: boolean) => {
       setSelectedModIds((prevSelectedIds) => {
@@ -492,7 +492,7 @@ export function NoRiskModsTabV2({
 
   const handleBatchToggleSelected = async () => {
     if (!profile.selected_norisk_pack_id || selectedModIds.size === 0) {
-      if (selectedModIds.size > 0) toast.error("No NoRisk pack selected.");
+      if (selectedModIds.size > 0) toast.error("No Copper pack selected.");
       return;
     }
 
@@ -502,7 +502,7 @@ export function NoRiskModsTabV2({
 
     const modsToToggle = Array.from(selectedModIds)
       .map((id) => noriskMods.find((m) => m.id === id))
-      .filter(Boolean) as NoRiskModV2[];
+      .filter(Boolean) as CopperModV2[];
 
     for (const mod of modsToToggle) {
       const currentModState = noriskMods.find((m) => m.id === mod.id);
@@ -541,7 +541,7 @@ export function NoRiskModsTabV2({
 
     if (errors.length > 0) {
       console.warn(
-        "Batch NoRisk mod toggle finished with errors:",
+        "Batch Copper mod toggle finished with errors:",
         errors.join("; "),
       );
     }
@@ -559,9 +559,9 @@ export function NoRiskModsTabV2({
         onRefreshRequired();
       }
     } catch (err) {
-      console.error("Failed to update selected NoRisk pack:", err);
+      console.error("Failed to update selected Copper pack:", err);
       toast.error(
-        `Failed to switch NoRisk pack: ${err instanceof Error ? err.message : String(err)}`,
+        `Failed to switch Copper pack: ${err instanceof Error ? err.message : String(err)}`,
       );
     }
   };
@@ -584,8 +584,8 @@ export function NoRiskModsTabV2({
     return [{ value: "", label: "- No Pack Selected -" }, ...options];
   }, [noriskPacksConfig]);
 
-  const renderNoRiskModItem = useCallback(
-    (mod: NoRiskModV2) => {
+  const renderCopperModItem = useCallback(
+    (mod: CopperModV2) => {
       const itemTitle = mod.display_name || mod.id;
       const isToggling = modBeingToggled === mod.id;
 
@@ -678,7 +678,7 @@ export function NoRiskModsTabV2({
         <Button
           size="sm"
           variant={mod.enabled ? "secondary" : "default"}
-          onClick={() => handleToggleNoRiskMod(mod.id)}
+          onClick={() => handleToggleCopperMod(mod.id)}
           disabled={isToggling || isBatchToggling}
         >
           {isToggling ? "..." : mod.enabled ? "Disable" : "Enable"}
@@ -702,7 +702,7 @@ export function NoRiskModsTabV2({
     },
     [
       accentColor.value,
-      handleToggleNoRiskMod,
+      handleToggleCopperMod,
       localIcons,
       modBeingToggled,
       isBatchToggling,
@@ -718,7 +718,7 @@ export function NoRiskModsTabV2({
         <SearchInput
           value={searchQuery}
           onChange={setSearchQuery}
-          placeholder="Search NoRisk mods..."
+          placeholder="Search Copper mods..."
           className="flex-grow !h-9"
           disabled={
             isLoading ||
@@ -745,7 +745,7 @@ export function NoRiskModsTabV2({
           variant="secondary"
           size="sm"
           title={
-            isRefreshingPacks ? "Refreshing..." : "Refresh NoRisk Packs List"
+            isRefreshingPacks ? "Refreshing..." : "Refresh Copper Packs List"
           }
           className="!h-9 !w-9 flex-shrink-0"
         />
@@ -823,9 +823,9 @@ export function NoRiskModsTabV2({
 
   return (
     <>
-      <GenericContentTab<NoRiskModV2>
+      <GenericContentTab<CopperModV2>
         items={profile.selected_norisk_pack_id ? filteredMods : []}
-        renderListItem={renderNoRiskModItem}
+        renderListItem={renderCopperModItem}
         isLoading={isLoading && !!profile.selected_norisk_pack_id}
         error={error}
         searchQuery={searchQuery}
@@ -833,26 +833,26 @@ export function NoRiskModsTabV2({
         emptyStateIcon={NORISK_MODS_TAB_ICONS_TO_PRELOAD[0]}
         emptyStateMessage={
           !profile.selected_norisk_pack_id
-            ? "No NoRisk Pack Selected"
+            ? "No Copper Pack Selected"
             : error
-              ? "Error loading NoRisk mods"
+              ? "Error loading Copper mods"
               : isLoading &&
                   filteredMods.length === 0 &&
                   !!profile.selected_norisk_pack_id
-                ? "Loading NoRisk mods..."
+                ? "Loading Copper mods..."
                 : !searchQuery &&
                     filteredMods.length === 0 &&
                     !!profile.selected_norisk_pack_id
-                  ? "No mods in this NoRisk pack."
+                  ? "No mods in this Copper pack."
                   : searchQuery &&
                       filteredMods.length === 0 &&
                       !!profile.selected_norisk_pack_id
-                    ? "No NoRisk mods match your search."
-                    : "Manage your NoRisk mods"
+                    ? "No Copper mods match your search."
+                    : "Manage your Copper mods"
         }
         emptyStateDescription={
           !profile.selected_norisk_pack_id
-            ? "Please select a NoRisk Modpack from the dropdown above to manage its mods."
+            ? "Please select a Copper Modpack from the dropdown above to manage its mods."
             : error
               ? "Please try refreshing or check the console."
               : isLoading &&

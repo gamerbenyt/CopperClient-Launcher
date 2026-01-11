@@ -1,6 +1,6 @@
 use crate::config::{ProjectDirsExt, HTTP_CLIENT, LAUNCHER_DIRECTORY};
 use crate::error::{AppError, Result};
-use crate::minecraft::api::NoRiskApi;
+use crate::minecraft::api::CopperApi;
 use crate::minecraft::auth::minecraft_auth::Credentials;
 use crate::minecraft::dto::norisk_meta::NoriskAssets;
 use crate::minecraft::dto::piston_meta::AssetObject;
@@ -45,7 +45,7 @@ impl NoriskClientAssetsDownloadService {
         self
     }
 
-    /// Downloads NoRisk client assets for a specific profile, processing the main pack
+    /// Downloads Copper client assets for a specific profile, processing the main pack
     /// and any additional asset groups defined in the pack configuration.
     pub async fn download_nrc_assets_for_profile(
         &self,
@@ -104,7 +104,7 @@ impl NoriskClientAssetsDownloadService {
         let norisk_token = match token_ref {
             Some(token) => token.value.clone(),
             None => {
-                warn!("[NRC Assets Download] No valid NoRisk token found for {} mode, skipping asset download",
+                warn!("[NRC Assets Download] No valid Copper token found for {} mode, skipping asset download",
                       if is_experimental { "experimental" } else { "production" });
                 return Ok(());
             }
@@ -153,13 +153,13 @@ impl NoriskClientAssetsDownloadService {
             unique_asset_ids
         );
         let total_groups = unique_asset_ids.len();
-        let target_base_dir = game_directory.join("NoRiskClient").join("assets");
+        let target_base_dir = game_directory.join("CopperClient").join("assets");
 
         self.emit_progress_event(
             &state,
             profile.id,
             &format!(
-                "Starting NoRiskClient asset processing for {} groups...",
+                "Starting CopperClient asset processing for {} groups...",
                 total_groups
             ),
             0.01,
@@ -266,7 +266,7 @@ impl NoriskClientAssetsDownloadService {
         self.emit_progress_event(
             &state,
             profile.id,
-            "NoRiskClient assets processing completed!",
+            "CopperClient assets processing completed!",
             1.0,
             None,
         )
@@ -291,7 +291,7 @@ impl NoriskClientAssetsDownloadService {
         progress_end: f64,
     ) -> Result<HashSet<PathBuf>> {
         let progress_range = progress_end - progress_start;
-        let target_base_dir = game_directory.join("NoRiskClient").join("assets");
+        let target_base_dir = game_directory.join("CopperClient").join("assets");
 
         // 1. Fetch assets
         self.emit_progress_event(
@@ -304,7 +304,7 @@ impl NoriskClientAssetsDownloadService {
         .await?;
 
         let assets =
-            match NoRiskApi::norisk_assets(asset_id, norisk_token, request_uuid, is_experimental)
+            match CopperApi::norisk_assets(asset_id, norisk_token, request_uuid, is_experimental)
                 .await
             {
                 Ok(fetched_assets) => {
@@ -470,7 +470,7 @@ impl NoriskClientAssetsDownloadService {
         Ok(expected_paths_for_group)
     }
 
-    /// Downloads NoRisk client assets for a specific asset ID (pack or asset group).
+    /// Downloads Copper client assets for a specific asset ID (pack or asset group).
     async fn download_nrc_assets(
         &self,
         asset_id: &str,
@@ -665,7 +665,7 @@ impl NoriskClientAssetsDownloadService {
                                     let event_id = Uuid::new_v4();
                                     if let Err(e) = state.emit_event(EventPayload {
                                         event_id,
-                                        event_type: EventType::DownloadingNoRiskClientAssets,
+                                        event_type: EventType::DownloadingCopperClientAssets,
                                         target_id: Some(profile_id),
                                         message,
                                         progress: Some(progress_within_download),
@@ -747,7 +747,7 @@ impl NoriskClientAssetsDownloadService {
         state
             .emit_event(EventPayload {
                 event_id,
-                event_type: EventType::DownloadingNoRiskClientAssets,
+                event_type: EventType::DownloadingCopperClientAssets,
                 target_id: Some(profile_id),
                 message: message.to_string(),
                 progress: Some(progress.clamp(0.0, 1.0)),
@@ -982,7 +982,7 @@ impl NoriskClientAssetsDownloadService {
         state
             .emit_event(EventPayload {
                 event_id,
-                event_type: EventType::CopyingNoRiskClientAssets,
+                event_type: EventType::CopyingCopperClientAssets,
                 target_id: Some(profile_id),
                 message: message.to_string(),
                 progress: Some(progress.clamp(0.0, 1.0)),
